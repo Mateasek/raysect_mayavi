@@ -46,11 +46,7 @@ def box_to_mesh(box):
         vertices[i, 1] = p.y
         vertices[i, 2] = p.z
 
-    dx = vertices[:, 0]
-    dy = vertices[:, 1]
-    dz = vertices[:, 2]
-
-    return dx, dy, dz, triangles
+    return vertices, triangles
 
 
 def sphere_to_mesh(sphere, subdivision_count=2):
@@ -164,11 +160,7 @@ def sphere_to_mesh(sphere, subdivision_count=2):
         vertices[i, 1] = p.y
         vertices[i, 2] = p.z
 
-    dx = vertices[:, 0]
-    dy = vertices[:, 1]
-    dz = vertices[:, 2]
-
-    return dx, dy, dz, triangles
+    return vertices, triangles
 
 
 def cylinder_to_mesh(cylinder, vertical_divisions=10, cylindrical_divisions=36, radial_divisions=5):
@@ -265,11 +257,7 @@ def cylinder_to_mesh(cylinder, vertical_divisions=10, cylindrical_divisions=36, 
         vertices[i, 1] = p.y
         vertices[i, 2] = p.z
 
-    dx = vertices[:, 0]
-    dy = vertices[:, 1]
-    dz = vertices[:, 2]
-
-    return dx, dy, dz, triangles
+    return vertices, triangles
 
 
 def cone_to_mesh(cone, vertical_divisions=10, cylindrical_divisions=36, base_radial_divisions=5):
@@ -347,11 +335,7 @@ def cone_to_mesh(cone, vertical_divisions=10, cylindrical_divisions=36, base_rad
         vertices[i, 1] = p.y
         vertices[i, 2] = p.z
 
-    dx = vertices[:, 0]
-    dy = vertices[:, 1]
-    dz = vertices[:, 2]
-
-    return dx, dy, dz, triangles
+    return vertices, triangles
 
 
 _object_handlers = {

@@ -28,7 +28,12 @@ def visualise_scenegraph(world):
     _parse_nodes(world, meshes)
 
     for mesh_description in meshes:
-        dx, dy, dz, triangles = mesh_description
+
+        vertices, triangles = mesh_description
+        dx = vertices[:, 0]
+        dy = vertices[:, 1]
+        dz = vertices[:, 2]
+
         mlab.triangular_mesh(dx, dy, dz, triangles, color=(163 / 255.0, 163 / 255.0, 163 / 255.0),
                              figure=fig)  # , transparent=True, opacity=0.3)
 
