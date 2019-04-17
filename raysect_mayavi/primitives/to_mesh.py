@@ -356,11 +356,32 @@ def cone_to_mesh(cone, vertical_divisions=10, cylindrical_divisions=36, base_rad
     return vertices, triangles
 
 
+def mesh_to_mesh(mesh):
+
+    vertices = mesh.data.vertices.copy()
+    triangles = mesh.data.triangles.copy()
+
+    if mesh.parent:
+        to_world = mesh.to_root()
+    else:
+        to_world = mesh.transform
+
+    # Convert vertices to positions in world coordinates
+    for i in range(vertices.shape[0]):
+        p = Point3D(vertices[i, 0], vertices[i, 1], vertices[i, 2]).transform(to_world)
+        vertices[i, 0] = p.x
+        vertices[i, 1] = p.y
+        vertices[i, 2] = p.z
+
+    return vertices, triangles
+
+
 _object_handlers = {
     Box: box_to_mesh,
     Sphere: sphere_to_mesh,
     Cylinder: cylinder_to_mesh,
     Cone: cone_to_mesh,
+    Mesh: mesh_to_mesh
 }
 
 
