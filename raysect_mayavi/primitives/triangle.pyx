@@ -37,6 +37,7 @@ cpdef tuple triangle3d_intersects_triangle3d(double u1x, double u1y, double u1z,
     :param double v3x: x coord of triangle v vertex 3.
     :param double v3y: y coord of triangle v vertex 3.
     :param double v3z: z coord of triangle v vertex 3.
+    :param double tolerance: the tolerance level of the intersection calculation.
     :return: (False, None) if not intersection is found.
       If an intersection is found, the tuple returned is (True, Intersect).
     :rtype: tuple
@@ -85,103 +86,47 @@ cpdef tuple triangle3d_intersects_triangle3d(double u1x, double u1y, double u1z,
     # Planes might be parallel
     if line_vec.length == 0:
         if n_pi1.x == n_pi2.x and n_pi1.y == n_pi2.y and n_pi1.z == n_pi2.z and d_pi1 == d_pi2:
-            # print()
-            # print("Plane P1 equation:")
-            # print("{}x + {}y + {}z = {}".format(n_pi1.x, n_pi1.y, n_pi1.z, d_pi1))
-            # print()
-            # print("Plane P2 equation:")
-            # print("{}x + {}y + {}z = {}".format(n_pi2.x, n_pi2.y, n_pi2.z, d_pi2))
-            # print()
             raise NotImplementedError("Planes are parallel and overlapping, this case is not yet implemented.")
         else:
             return False,
     line_vec = line_vec.normalise()
 
-
-    # print()
-    # print("Plane P1 equation:")
-    # print("{}x + {}y + {}z = {}".format(n_pi1.x, n_pi1.y, n_pi1.z, d_pi1))
-    # print()
-    # print("Plane P2 equation:")
-    # print("{}x + {}y + {}z = {}".format(n_pi2.x, n_pi2.y, n_pi2.z, d_pi2))
-    # print()
-    # print("Find intersection line of P1 and P2.")
-    # print("Line's vector = n1 x n2 =>", line_vec.x, line_vec.y, line_vec.z)
-    # print()
-
     if n_pi1.x != 0.0 and n_pi1.y != 0.0:
 
         denominator = n_pi2.x - (n_pi1.x * n_pi2.y / n_pi1.y)
         if denominator != 0:
-            # print("path 1")
             lo_x = (d_pi2 - (d_pi1 * n_pi2.y / n_pi1.y)) / denominator
             lo_y = (d_pi1 - n_pi1.x * lo_x) / n_pi1.y
             lo_z = 0
             valid_intersection_found = True
-        # else:
-        #     print('')
-        #     print("Unsolveable triangle intersection problem.")
-        #     print(n_pi1.x, n_pi1.y, n_pi1.z)
-        #     print(n_pi2.x, n_pi2.y, n_pi2.z)
-        #     print(denominator)
-        #     print(denominator2)
-        #     raise ValueError("Unsolveable triangle intersection problem.")
 
     if not valid_intersection_found and n_pi1.x != 0.0 and n_pi1.z != 0.0:
 
         denominator = n_pi2.x - (n_pi1.x * n_pi2.z / n_pi1.z)
         if denominator != 0:
-            # print("path 2")
             lo_x = (d_pi2 - (d_pi1 * n_pi2.z / n_pi1.z)) / denominator
             lo_y = 0
             lo_z = (d_pi1 - n_pi1.x * lo_x) / n_pi1.z
             valid_intersection_found = True
-        # else:
-        #     print('')
-        #     print("Unsolveable triangle intersection problem.")
-        #     print(n_pi1.x, n_pi1.y, n_pi1.z)
-        #     print(n_pi2.x, n_pi2.y, n_pi2.z)
-        #     print(denominator)
-        #     raise ValueError("Unsolveable triangle intersection problem.")
 
     if not valid_intersection_found and n_pi1.y != 0.0 and n_pi1.z != 0.0:
 
         denominator = n_pi2.z - (n_pi1.z * n_pi2.y / n_pi1.y)
         if denominator != 0:
-            # print("path 3")
             lo_x = 0
             lo_z = (d_pi2 - (d_pi1 * n_pi2.y / n_pi1.y)) / denominator
             lo_y = (d_pi1 - n_pi1.z * lo_z) / n_pi1.y
             valid_intersection_found = True
-        # else:
-        #     print('')
-        #     print("Unsolveable triangle intersection problem.")
-        #     print(n_pi1.x, n_pi1.y, n_pi1.z)
-        #     print(n_pi2.x, n_pi2.y, n_pi2.z)
-        #     print(denominator)
-        #     raise ValueError("Unsolveable triangle intersection problem.")
 
     if not valid_intersection_found:
+        raise ValueError("Unsolvable triangle intersection problem.")
 
-        print('')
-        print("Unsolveable triangle intersection problem.")
-        print(n_pi1.x, n_pi1.y, n_pi1.z)
-        print(n_pi2.x, n_pi2.y, n_pi2.z)
-        print()
-        raise ValueError("Unsolveable triangle intersection problem.")
-
-    # print("point 2")
     line_origin = new_vector3d(lo_x, lo_y, lo_z)
-    # print("Line's origin =>", line_origin.x, line_origin.y, line_origin.z)
-    # print()
 
     l = n_pi2.length
     du1 = (n_pi2.dot(u1) - d_pi2) / l
     du2 = (n_pi2.dot(u2) - d_pi2) / l
     du3 = (n_pi2.dot(u3) - d_pi2) / l
-    # print("signed distances")
-    # print("U vertices from plane 2")
-    # print(du1, du2, du3)
 
     # case for no intersection
     if (du1 > 0 and du2 > 0 and du3 > 0) or (du1 < 0 and du2 < 0 and du3 < 0):
@@ -191,17 +136,13 @@ cpdef tuple triangle3d_intersects_triangle3d(double u1x, double u1y, double u1z,
     dv1 = (n_pi1.dot(v1) - d_pi1) / l
     dv2 = (n_pi1.dot(v2) - d_pi1) / l
     dv3 = (n_pi1.dot(v3) - d_pi1) / l
-    # print("signed distances")
-    # print("V vertices from plane 1")
-    # print(dv1, dv2, dv3)
 
     if (dv1 > 0 and dv2 > 0 and dv3 > 0) or (dv1 < 0 and dv2 < 0 and dv3 < 0):
         return False,
 
     # case for co-planar triangles
     elif (du1 == 0 and du2 == 0 and du3 == 0) or (dv1 == 0 and dv2 == 0 and dv3 == 0):
-        # TODO - implement me
-        return False,
+        raise NotImplementedError("Planes are parallel and overlapping, this case is not yet implemented.")
 
     # case for overlapping 3D triangles
     else:
@@ -220,38 +161,25 @@ cpdef tuple triangle3d_intersects_triangle3d(double u1x, double u1y, double u1z,
         min_pv = min(pv1, pv2, pv3)
         max_pv = max(pv1, pv2, pv3)
 
-        # print()
-        # print(pu1, pu2, pu3)
-        # print(pv1, pv2, pv3)
-        # print()
-
         if not du1 - du2 == 0:
             t1 = pu1 + (pu2 - pu1) * (du1 / (du1 - du2))
             if min_pu <= t1 <= max_pu:
                 t1_found = True
-                # print("first")
-                # print("t1: ", t1)
 
         if not du1 - du3 == 0:
             if not t1_found:
                 t1 = pu1 + (pu3 - pu1) * (du1 / (du1 - du3))
                 if min_pu <= t1 <= max_pu:
                     t1_found = True
-                    # print("second")
-                    # print("t1: ", t1)
             else:
                 t2 = pu1 + (pu3 - pu1) * (du1 / (du1 - du3))
                 if min_pu <= t2 <= max_pu:
                     t2_found = True
-                    # print("third")
-                    # print("t2: ", t2)
 
         if not t2_found and not du2 - du3 == 0:
             t2 = pu2 + (pu3 - pu2) * (du2 / (du2 - du3))
             if min_pu <= t2 <= max_pu:
                 t2_found = True
-                # print("fourth")
-                # print("t2: ", t2)
 
         # ignore case of single contact point, need two contact points for valid intersection
         if not (t1_found and t2_found):
@@ -264,29 +192,21 @@ cpdef tuple triangle3d_intersects_triangle3d(double u1x, double u1y, double u1z,
             t3 = pv1 + (pv2 - pv1) * (dv1 / (dv1 - dv2))
             if min_pv <= t3 <= max_pv:
                 t3_found = True
-                # print("fifth")
-                # print("t3: ", t3)
 
         if not dv1 - dv3 == 0:
             if not t3_found:
                 t3 = pv1 + (pv3 - pv1) * (dv1 / (dv1 - dv3))
                 if min_pv <= t3 <= max_pv:
                     t3_found = True
-                    # print("sixth")
-                    # print("t3: ", t3)
             else:
                 t4 = pv1 + (pv3 - pv1) * (dv1 / (dv1 - dv3))
                 if min_pv <= t4 <= max_pv:
                     t4_found = True
-                    # print("seventh")
-                    # print("t4: ", t4)
 
         if not t4_found and not dv2 - dv3 == 0:
             t4 = pv2 + (pv3 - pv2) * (dv2 / (dv2 - dv3))
             if min_pv <= t4 <= max_pv:
                 t4_found = True
-                # print("eigth")
-                # print("t4: ", t4)
 
         # ignore case of single contact point, need two contact points for valid intersection
         if not (t3_found and t4_found):
@@ -300,10 +220,7 @@ cpdef tuple triangle3d_intersects_triangle3d(double u1x, double u1y, double u1z,
             t1, t3 = t3, t1
             t2, t4 = t4, t2
 
-        plane1 = (n_pi1, d_pi1)
-        plane2 = (n_pi2, d_pi2)
-
-        # Quick test for no intersection
+        # test for no intersection
         if (t1 < t3 and t1 < t4 and t2 < t3 and t2 < t4) or (t1 > t3 and t1 > t4 and t2 > t3 and t2 > t4):
             return False,
         else:
@@ -314,4 +231,4 @@ cpdef tuple triangle3d_intersects_triangle3d(double u1x, double u1y, double u1z,
             if t2_point.distance_to(t3_point) < tolerance:
                 return False,
 
-            return True, t2_point, t3_point, line_origin, line_vec, plane1, plane2
+            return True, t2_point, t3_point
