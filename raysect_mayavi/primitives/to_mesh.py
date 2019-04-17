@@ -37,7 +37,11 @@ def box_to_mesh(box):
 
     vertices = np.array(vertices)
     triangles = np.array(triangles)
-    to_world = box.to_root()
+
+    if box.parent:
+        to_world = box.to_root()
+    else:
+        to_world = box.transform
 
     # Convert vertices to positions in world coordinates
     for i in range(vertices.shape[0]):
@@ -151,7 +155,11 @@ def sphere_to_mesh(sphere, subdivision_count=2):
 
     vertices = np.array(vertices)
     triangles = np.array(triangles)
-    to_world = sphere.to_root()
+
+    if sphere.parent:
+        to_world = sphere.to_root()
+    else:
+        to_world = sphere.transform
 
     # Convert vertices to positions in world coordinates
     for i in range(vertices.shape[0]):
@@ -248,6 +256,12 @@ def cylinder_to_mesh(cylinder, vertical_divisions=10, cylindrical_divisions=36, 
 
     vertices = np.array(vertices)
     triangles = np.array(triangles)
+
+    if cylinder.parent:
+        to_world = cylinder.to_root()
+    else:
+        to_world = cylinder.transform
+
     to_world = cylinder.to_root()
 
     # Convert vertices to positions in world coordinates
@@ -326,7 +340,11 @@ def cone_to_mesh(cone, vertical_divisions=10, cylindrical_divisions=36, base_rad
 
     vertices = np.array(vertices)
     triangles = np.array(triangles)
-    to_world = cone.to_root()
+
+    if cone.parent:
+        to_world = cone.to_root()
+    else:
+        to_world = cone.transform
 
     # Convert vertices to positions in world coordinates
     for i in range(vertices.shape[0]):
@@ -342,7 +360,7 @@ _object_handlers = {
     Box: box_to_mesh,
     Sphere: sphere_to_mesh,
     Cylinder: cylinder_to_mesh,
-    Cone: cone_to_mesh
+    Cone: cone_to_mesh,
 }
 
 
