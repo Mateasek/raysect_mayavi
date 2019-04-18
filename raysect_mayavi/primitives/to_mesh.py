@@ -5,6 +5,9 @@ from scipy.spatial import Delaunay
 from raysect.core import Point3D, Vector3D
 from raysect.primitive import Mesh, Box, Sphere, Cylinder, Cone, Parabola, Intersect, Union, Subtract
 
+from raysect_mayavi.primitives.mesh_csg import perform_mesh_csg
+from raysect_mayavi.primitives.mesh_csg import Intersect as IntersectOperator, Union as UnionOperator,Subtract as SubtractOperator
+
 
 def box_to_mesh(box):
 
@@ -376,12 +379,53 @@ def mesh_to_mesh(mesh):
     return vertices, triangles
 
 
+# Intersect, Union, Subtract
+def csg_to_mesh(csg_primitive):
+
+    vertices, triangles = to_mesh(csg_primitive.primitive_a)
+    mesh_a = Mesh(vertices, triangles)
+
+    vertices, triangles = to_mesh(csg_primitive.primitive_b)
+    mesh_b = Mesh(vertices, triangles)
+
+    if csg_primitive.__class__ == Intersect:
+        operator = IntersectOperator()
+    elif csg_primitive.__class__ == Union:
+        operator = UnionOperator()
+    elif csg_primitive.__class__ == Subtract:
+        operator = SubtractOperator()
+    else:
+        raise ValueError("Unidentified CSG primitive '{}'.".format(csg_primitive.__class__))
+
+    mesh = perform_mesh_csg(mesh_a, mesh_b, operator=operator)
+
+    vertices = mesh.data.vertices.copy()
+    triangles = mesh.data.triangles.copy()
+
+    if csg_primitive.parent:
+        to_world = csg_primitive.to_root()
+    else:
+        to_world = csg_primitive.transform
+
+    # Convert vertices to positions in world coordinates
+    for i in range(vertices.shape[0]):
+        p = Point3D(vertices[i, 0], vertices[i, 1], vertices[i, 2]).transform(to_world)
+        vertices[i, 0] = p.x
+        vertices[i, 1] = p.y
+        vertices[i, 2] = p.z
+
+    return vertices, triangles
+
+
 _object_handlers = {
     Box: box_to_mesh,
     Sphere: sphere_to_mesh,
     Cylinder: cylinder_to_mesh,
     Cone: cone_to_mesh,
-    Mesh: mesh_to_mesh
+    Mesh: mesh_to_mesh,
+    Intersect: csg_to_mesh,
+    Union: csg_to_mesh,
+    Subtract: csg_to_mesh
 }
 
 
