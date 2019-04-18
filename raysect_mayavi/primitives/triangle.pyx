@@ -91,7 +91,7 @@ cpdef tuple triangle3d_intersects_triangle3d(double u1x, double u1y, double u1z,
             return False,
     line_vec = line_vec.normalise()
 
-    if n_pi1.x != 0.0 and n_pi1.y != 0.0:
+    if n_pi1.y != 0.0:
 
         denominator = n_pi2.x - (n_pi1.x * n_pi2.y / n_pi1.y)
         if denominator != 0:
@@ -100,7 +100,16 @@ cpdef tuple triangle3d_intersects_triangle3d(double u1x, double u1y, double u1z,
             lo_z = 0
             valid_intersection_found = True
 
-    if not valid_intersection_found and n_pi1.x != 0.0 and n_pi1.z != 0.0:
+    if not valid_intersection_found and n_pi2.y != 0.0:
+
+        denominator = n_pi1.x - (n_pi2.x * n_pi1.y / n_pi2.y)
+        if denominator != 0:
+            lo_x = (d_pi1 - (d_pi2 * n_pi1.y / n_pi2.y)) / denominator
+            lo_y = (d_pi2 - n_pi2.x * lo_x) / n_pi2.y
+            lo_z = 0
+            valid_intersection_found = True
+
+    if not valid_intersection_found and n_pi1.z != 0.0:
 
         denominator = n_pi2.x - (n_pi1.x * n_pi2.z / n_pi1.z)
         if denominator != 0:
@@ -109,7 +118,16 @@ cpdef tuple triangle3d_intersects_triangle3d(double u1x, double u1y, double u1z,
             lo_z = (d_pi1 - n_pi1.x * lo_x) / n_pi1.z
             valid_intersection_found = True
 
-    if not valid_intersection_found and n_pi1.y != 0.0 and n_pi1.z != 0.0:
+    if not valid_intersection_found and n_pi2.z != 0.0:
+
+        denominator = n_pi1.x - (n_pi2.x * n_pi1.z / n_pi2.z)
+        if denominator != 0:
+            lo_x = (d_pi1 - (d_pi2 * n_pi1.z / n_pi2.z)) / denominator
+            lo_y = 0
+            lo_z = (d_pi2 - n_pi2.x * lo_x) / n_pi2.z
+            valid_intersection_found = True
+
+    if not valid_intersection_found and n_pi1.y != 0.0:
 
         denominator = n_pi2.z - (n_pi1.z * n_pi2.y / n_pi1.y)
         if denominator != 0:
@@ -118,7 +136,26 @@ cpdef tuple triangle3d_intersects_triangle3d(double u1x, double u1y, double u1z,
             lo_y = (d_pi1 - n_pi1.z * lo_z) / n_pi1.y
             valid_intersection_found = True
 
+    if not valid_intersection_found and n_pi2.y != 0.0:
+
+        denominator = n_pi1.z - (n_pi2.z * n_pi1.y / n_pi2.y)
+        if denominator != 0:
+            lo_x = 0
+            lo_z = (d_pi1 - (d_pi2 * n_pi1.y / n_pi2.y)) / denominator
+            lo_y = (d_pi2 - n_pi2.z * lo_z) / n_pi2.y
+            valid_intersection_found = True
+
     if not valid_intersection_found:
+        print('')
+        print('Debugging information')
+        print('')
+        print('u1 = Point3D({}, {}, {})'.format(u1x, u1y, u1z))
+        print('u2 = Point3D({}, {}, {})'.format(u2x, u2y, u2z))
+        print('u3 = Point3D({}, {}, {})'.format(u3x, u3y, u3z))
+        print('')
+        print('v1 = Point3D({}, {}, {})'.format(v1x, v1y, v1z))
+        print('v2 = Point3D({}, {}, {})'.format(v2x, v2y, v2z))
+        print('v3 = Point3D({}, {}, {})'.format(v3x, v3y, v3z))
         raise ValueError("Unsolvable triangle intersection problem.")
 
     line_origin = new_vector3d(lo_x, lo_y, lo_z)
