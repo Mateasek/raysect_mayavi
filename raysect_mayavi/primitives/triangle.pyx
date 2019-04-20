@@ -253,7 +253,7 @@ cpdef tuple triangle3d_intersects_triangle3d(double u1x, double u1y, double u1z,
             t3, t4 = t4, t3
 
         # ensure triangles are ordered lowest to highers in terms of parameter t (i.e. left to right)
-        if t3 < t1 and t4 <= t1 + tolerance:
+        if t3 < t1:
             t1, t3 = t3, t1
             t2, t4 = t4, t2
 
