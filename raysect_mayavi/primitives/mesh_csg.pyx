@@ -1,5 +1,6 @@
 
 import numpy as np
+from libc.math cimport sqrt
 from scipy.spatial import Delaunay, KDTree
 
 from raysect.core cimport Point3D, translate, rotate_basis
@@ -82,14 +83,19 @@ cpdef Mesh perform_mesh_csg(Mesh mesh_1, Mesh mesh_2, CSG_Operator operator):
     n_m2_vertices = m2_vertices.shape[0]
     n_m2_triangles = m2_triangles.shape[0]
 
-    # calculate triangle centres and KDtree for mesh 2
+    # calculate triangle centres, longest side length and KDtree for mesh 2
     m2_tri_centres = np.zeros(m2_triangles.shape)
+    longest_m2_side = 0
     for m2_tri_id in range(n_m2_triangles):
         v1, v2, v3 = m2_triangles[m2_tri_id]
         v1x, v1y, v1z = m2_vertices[v1]
         v2x, v2y, v2z = m2_vertices[v2]
         v3x, v3y, v3z = m2_vertices[v3]
         m2_tri_centres[m2_tri_id, :] = (v1x + v2x + v3x) / 3, (v1y + v2y + v3y) / 3, (v1z + v2z + v3z) / 3
+        v1v2_length = sqrt((v2x-v1x)**2+(v2y-v1y)**2+(v2z-v1z)**2)
+        v2v3_length = sqrt((v3x-v2x)**2+(v3y-v2y)**2+(v3z-v2z)**2)
+        v1v3_length = sqrt((v3x-v1x)**2+(v3y-v1y)**2+(v3z-v1z)**2)
+        longest_m2_side = max(longest_m2_side, v1v2_length, v2v3_length, v1v3_length)
     m2_kdtree = KDTree(m2_tri_centres)
 
     ####################################################################################################################
@@ -117,12 +123,11 @@ cpdef Mesh perform_mesh_csg(Mesh mesh_1, Mesh mesh_2, CSG_Operator operator):
         u2 = Point3D(u2x, u2y, u2z)
         u3x, u3y, u3z = m1_vertices[v3]
         u3 = Point3D(u3x, u3y, u3z)
-        uc = Point3D(m1_tri_centres[m1_tri_id, 0], m1_tri_centres[m1_tri_id, 1], m1_tri_centres[m1_tri_id, 2])
+        uc = Point3D((u1x + u2x + u3x) / 3, (u1y + u2y + u3y) / 3, (u1z + u2z + u3z) / 3)
         n_pi1 = u1.vector_to(u2).cross(u1.vector_to(u3)).normalise()  # normal vector of plane 1
-        tri1_radius = max(uc.distance_to(u1), uc.distance_to(u2), uc.distance_to(u3))
 
         # find all mesh 2 triangles within radius r of mesh 1
-        m2_candidates = m2_kdtree.query_ball_point([uc.x, uc.y, uc.z], tri1_radius)
+        m2_candidates = m2_kdtree.query_ball_point([uc.x, uc.y, uc.z], longest_m2_side)
 
         m1m2_distance = 1E999  # temp variable
         for m2_tri_id in m2_candidates:
@@ -135,7 +140,7 @@ cpdef Mesh perform_mesh_csg(Mesh mesh_1, Mesh mesh_2, CSG_Operator operator):
             v2 = Point3D(v2x, v2y, v2z)
             v3x, v3y, v3z = m2_vertices[v3]
             v3 = Point3D(v3x, v3y, v3z)
-            vc = Point3D(m2_tri_centres[m2_tri_id, 0], m2_tri_centres[m2_tri_id, 1], m2_tri_centres[m2_tri_id, 2])
+            vc = Point3D((v1x + v2x + v3x) / 3, (v1y + v2y + v3y) / 3, (v1z + v2z + v3z) / 3)
             n_pi2 = v1.vector_to(v2).cross(v1.vector_to(v3)).normalise()  # normal vector of plane 2
 
             uv_distance = uc.distance_to(vc)
