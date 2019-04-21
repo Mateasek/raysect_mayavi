@@ -1,5 +1,6 @@
 
 
+cimport cython
 from libc.math cimport abs
 from raysect.core.math cimport Vector3D, new_vector3d, new_point3d
 
@@ -27,6 +28,7 @@ cdef class Triangle:
         self.normal = cross.normalise()
 
 
+@cython.cdivision(True)
 cpdef tuple triangle3d_intersects_triangle3d(Triangle triangle_1, Triangle triangle_2, double tolerance=1e-6):
     """
     Cython utility for finding the intersection of two 3d triangles.
@@ -52,6 +54,7 @@ cpdef tuple triangle3d_intersects_triangle3d(Triangle triangle_1, Triangle trian
         double d_pi1, d_pi2
         double uv_distance, d_u_from_v, d_v_from_u
         double lo_x, lo_y, lo_z
+        double l
         double du1, du2, du3, dv1, dv2, dv3
         double pu1, pu2, pu3, pv1, pv2, pv3
         double min_pu, max_pu, min_mv, max_mv
@@ -85,7 +88,7 @@ cpdef tuple triangle3d_intersects_triangle3d(Triangle triangle_1, Triangle trian
     line_vec = n_pi1.cross(n_pi2)
 
     # Planes might be parallel
-    if line_vec.length == 0:
+    if line_vec.get_length() == 0:
         if n_pi1.x == n_pi2.x and n_pi1.y == n_pi2.y and n_pi1.z == n_pi2.z and d_pi1 == d_pi2:
             raise NotImplementedError("Planes are parallel and overlapping, this case is not yet implemented.")
         else:
@@ -161,7 +164,7 @@ cpdef tuple triangle3d_intersects_triangle3d(Triangle triangle_1, Triangle trian
 
     line_origin = new_point3d(lo_x, lo_y, lo_z)
 
-    l = n_pi2.length
+    l = n_pi2.get_length()
     du1 = (n_pi2.dot(new_vector3d(u1.x, u1.y, u1.z)) - d_pi2) / l
     du2 = (n_pi2.dot(new_vector3d(u2.x, u2.y, u2.z)) - d_pi2) / l
     du3 = (n_pi2.dot(new_vector3d(u3.x, u3.y, u3.z)) - d_pi2) / l
@@ -170,7 +173,7 @@ cpdef tuple triangle3d_intersects_triangle3d(Triangle triangle_1, Triangle trian
     if (du1 > 0 and du2 > 0 and du3 > 0) or (du1 < 0 and du2 < 0 and du3 < 0):
         return False,
 
-    l = n_pi1.length
+    l = n_pi1.get_length()
     dv1 = (n_pi1.dot(new_vector3d(v1.x, v1.y, v1.z)) - d_pi1) / l
     dv2 = (n_pi1.dot(new_vector3d(v2.x, v2.y, v2.z)) - d_pi1) / l
     dv3 = (n_pi1.dot(new_vector3d(v3.x, v3.y, v3.z)) - d_pi1) / l
