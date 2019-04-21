@@ -1,16 +1,24 @@
 
 
 from libc.math cimport abs
-from raysect.core.math cimport Vector3D, new_vector3d, Point3D, new_point3d
+from raysect.core.math cimport new_vector3d, new_point3d
 
 
-cpdef tuple triangle3d_intersects_triangle3d(double u1x, double u1y, double u1z,
-                                             double u2x, double u2y, double u2z,
-                                             double u3x, double u3y, double u3z,
-                                             double v1x, double v1y, double v1z,
-                                             double v2x, double v2y, double v2z,
-                                             double v3x, double v3y, double v3z,
-                                             double tolerance=1e-6):
+cdef class Triangle:
+
+    def __init__(self, double v1x, double v1y, double v1z,
+                 double v2x, double v2y, double v2z,
+                 double v3x, double v3y, double v3z):
+
+        self.v1 = new_point3d(v1x, v1y, v1z)
+        self.v2 = new_point3d(v2x, v2y, v2z)
+        self.v3 = new_point3d(v3x, v3y, v3z)
+
+        self.vc = new_point3d((v1x + v2x + v3x) / 3, (v1y + v2y + v3y) / 3, (v1z + v2z + v3z) / 3)
+        self.normal = self.v1.vector_to(self.v2).cross(self.v1.vector_to(self.v3)).normalise()
+
+
+cpdef tuple triangle3d_intersects_triangle3d(Triangle triangle_1, Triangle triangle_2, double tolerance=1e-6):
     """
     Cython utility for finding the intersection of two 3d triangles.
     
@@ -19,24 +27,8 @@ cpdef tuple triangle3d_intersects_triangle3d(double u1x, double u1y, double u1z,
     
     http://web.stanford.edu/class/cs277/resources/papers/Moller1997b.pdf
 
-    :param double u1x: x coord of triangle u vertex 1.
-    :param double u1y: y coord of triangle u vertex 1.
-    :param double u1z: z coord of triangle u vertex 1.
-    :param double u2x: x coord of triangle u vertex 2.
-    :param double u2y: y coord of triangle u vertex 2.
-    :param double u2z: z coord of triangle u vertex 2.
-    :param double u3x: x coord of triangle u vertex 3.
-    :param double u3y: y coord of triangle u vertex 3.
-    :param double u3z: z coord of triangle u vertex 3.
-    :param double v1x: x coord of triangle v vertex 1.
-    :param double v1y: y coord of triangle v vertex 1.
-    :param double v1z: z coord of triangle v vertex 1.
-    :param double v2x: x coord of triangle v vertex 2.
-    :param double v2y: y coord of triangle v vertex 2.
-    :param double v2z: z coord of triangle v vertex 2.
-    :param double v3x: x coord of triangle v vertex 3.
-    :param double v3y: y coord of triangle v vertex 3.
-    :param double v3z: z coord of triangle v vertex 3.
+    :param Triangle triangle_1: the first triangle to be tested.
+    :param Triangle triangle_2: the second triangle to be tested.
     :param double tolerance: the tolerance level of the intersection calculation.
     :return: (False, None) if not intersection is found.
       If an intersection is found, the tuple returned is (True, Intersect).
@@ -45,7 +37,7 @@ cpdef tuple triangle3d_intersects_triangle3d(double u1x, double u1y, double u1z,
 
     cdef:
 
-        Vector3D u1, u2, u3, v1, v2, v3
+        Point3D u1, u2, u3, v1, v2, v3
         Point3D uc, vc
         Vector3D n_pi1, n_pi2, line_vec
         double d_pi1, d_pi2
@@ -60,25 +52,25 @@ cpdef tuple triangle3d_intersects_triangle3d(double u1x, double u1y, double u1z,
         bint t1_found = False, t2_found = False
         bint t3_found = False, t4_found = False
 
-    u1 = new_vector3d(u1x, u1y, u1z)
-    u2 = new_vector3d(u2x, u2y, u2z)
-    u3 = new_vector3d(u3x, u3y, u3z)
-    uc = new_point3d((u1x+u2x+u3x)/3, (u1y+u2y+u3y)/3, (u1z+u2z+u3z)/3)
+    u1 = triangle_1.v1
+    u2 = triangle_1.v2
+    u3 = triangle_1.v3
+    uc = triangle_1.vc
 
-    v1 = new_vector3d(v1x, v1y, v1z)
-    v2 = new_vector3d(v2x, v2y, v2z)
-    v3 = new_vector3d(v3x, v3y, v3z)
-    vc = new_point3d((v1x+v2x+v3x)/3, (v1y+v2y+v3y)/3, (v1z+v2z+v3z)/3)
+    v1 = triangle_2.v1
+    v2 = triangle_2.v2
+    v3 = triangle_2.v3
+    vc = triangle_2.vc
 
     # TODO - consider moving to Hessian form of plane equation
 
     # Setup Plane 1 equation
-    n_pi1 = u2.sub(u1).cross(u3.sub(u1))  # normal vector of plane 1
-    d_pi1 = n_pi1.dot(u1)  # point satisfying the plane equation for plane 1
+    n_pi1 = u1.vector_to(u2).cross(u1.vector_to(u3))  # normal vector of plane 1
+    d_pi1 = n_pi1.dot(new_vector3d(u1.x, u1.y, u1.z))  # point satisfying the plane equation for plane 1
 
     # Setup Plane 2 equation
-    n_pi2 = v2.sub(v1).cross(v3.sub(v1))  # normal vector of plane 2
-    d_pi2 = n_pi2.dot(v1)  # point satisfying the plane equation for plane 2
+    n_pi2 = v1.vector_to(v2).cross(v1.vector_to(v3))  # normal vector of plane 2
+    d_pi2 = n_pi2.dot(new_vector3d(v1.x, v1.y, v1.z))  # point satisfying the plane equation for plane 2
 
     # Find line on intersection of planes P1 and P2
     line_vec = n_pi1.cross(n_pi2)
@@ -149,30 +141,30 @@ cpdef tuple triangle3d_intersects_triangle3d(double u1x, double u1y, double u1z,
         print('')
         print('Debugging information')
         print('')
-        print('u1 = Point3D({}, {}, {})'.format(u1x, u1y, u1z))
-        print('u2 = Point3D({}, {}, {})'.format(u2x, u2y, u2z))
-        print('u3 = Point3D({}, {}, {})'.format(u3x, u3y, u3z))
+        print('u1 = Point3D({}, {}, {})'.format(triangle_1.v1.x, triangle_1.v1.y, triangle_1.v1.z))
+        print('u2 = Point3D({}, {}, {})'.format(triangle_1.v2.x, triangle_1.v2.y, triangle_1.v2.z))
+        print('u3 = Point3D({}, {}, {})'.format(triangle_1.v3.x, triangle_1.v3.y, triangle_1.v3.z))
         print('')
-        print('v1 = Point3D({}, {}, {})'.format(v1x, v1y, v1z))
-        print('v2 = Point3D({}, {}, {})'.format(v2x, v2y, v2z))
-        print('v3 = Point3D({}, {}, {})'.format(v3x, v3y, v3z))
+        print('v1 = Point3D({}, {}, {})'.format(triangle_2.v1.x, triangle_2.v1.y, triangle_2.v1.z))
+        print('v2 = Point3D({}, {}, {})'.format(triangle_2.v2.x, triangle_2.v2.y, triangle_2.v2.z))
+        print('v3 = Point3D({}, {}, {})'.format(triangle_2.v3.x, triangle_2.v3.y, triangle_2.v3.z))
         raise ValueError("Unsolvable triangle intersection problem.")
 
-    line_origin = new_vector3d(lo_x, lo_y, lo_z)
+    line_origin = new_point3d(lo_x, lo_y, lo_z)
 
     l = n_pi2.length
-    du1 = (n_pi2.dot(u1) - d_pi2) / l
-    du2 = (n_pi2.dot(u2) - d_pi2) / l
-    du3 = (n_pi2.dot(u3) - d_pi2) / l
+    du1 = (n_pi2.dot(new_vector3d(u1.x, u1.y, u1.z)) - d_pi2) / l
+    du2 = (n_pi2.dot(new_vector3d(u2.x, u2.y, u2.z)) - d_pi2) / l
+    du3 = (n_pi2.dot(new_vector3d(u3.x, u3.y, u3.z)) - d_pi2) / l
 
     # case for no intersection
     if (du1 > 0 and du2 > 0 and du3 > 0) or (du1 < 0 and du2 < 0 and du3 < 0):
         return False,
 
     l = n_pi1.length
-    dv1 = (n_pi1.dot(v1) - d_pi1) / l
-    dv2 = (n_pi1.dot(v2) - d_pi1) / l
-    dv3 = (n_pi1.dot(v3) - d_pi1) / l
+    dv1 = (n_pi1.dot(new_vector3d(v1.x, v1.y, v1.z)) - d_pi1) / l
+    dv2 = (n_pi1.dot(new_vector3d(v2.x, v2.y, v2.z)) - d_pi1) / l
+    dv3 = (n_pi1.dot(new_vector3d(v3.x, v3.y, v3.z)) - d_pi1) / l
 
     if (dv1 > 0 and dv2 > 0 and dv3 > 0) or (dv1 < 0 and dv2 < 0 and dv3 < 0):
         return False,
@@ -184,16 +176,16 @@ cpdef tuple triangle3d_intersects_triangle3d(double u1x, double u1y, double u1z,
     # case for overlapping 3D triangles
     else:
 
-        pu1 = line_vec.dot(u1.sub(line_origin))
-        pu2 = line_vec.dot(u2.sub(line_origin))
-        pu3 = line_vec.dot(u3.sub(line_origin))
+        pu1 = line_vec.dot(line_origin.vector_to(u1))
+        pu2 = line_vec.dot(line_origin.vector_to(u2))
+        pu3 = line_vec.dot(line_origin.vector_to(u3))
 
         min_pu = min(pu1, pu2, pu3)
         max_pu = max(pu1, pu2, pu3)
 
-        pv1 = line_vec.dot(v1.sub(line_origin))
-        pv2 = line_vec.dot(v2.sub(line_origin))
-        pv3 = line_vec.dot(v3.sub(line_origin))
+        pv1 = line_vec.dot(line_origin.vector_to(v1))
+        pv2 = line_vec.dot(line_origin.vector_to(v2))
+        pv3 = line_vec.dot(line_origin.vector_to(v3))
 
         min_pv = min(pv1, pv2, pv3)
         max_pv = max(pv1, pv2, pv3)
