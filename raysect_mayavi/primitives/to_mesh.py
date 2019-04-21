@@ -265,8 +265,6 @@ def cylinder_to_mesh(cylinder, vertical_divisions=10, cylindrical_divisions=36, 
     else:
         to_world = cylinder.transform
 
-    to_world = cylinder.to_root()
-
     # Convert vertices to positions in world coordinates
     for i in range(vertices.shape[0]):
         p = Point3D(vertices[i, 0], vertices[i, 1], vertices[i, 2]).transform(to_world)
