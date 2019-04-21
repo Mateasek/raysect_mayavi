@@ -252,6 +252,19 @@ cpdef tuple triangle3d_intersects_triangle3d(Triangle triangle_1, Triangle trian
         # test for no intersection
         if (t1 < t3 and t1 < t4 and t2 < t3 and t2 < t4) or (t1 > t3 and t1 > t4 and t2 > t3 and t2 > t4):
             return False,
+
+        # case where one triangle is inside another
+        elif t1 < t3 < t2 and t1 < t4 < t2:
+
+            t3_point = new_point3d(line_origin.x + t3 * line_vec.x, line_origin.y + t3 * line_vec.y, line_origin.z + t3 * line_vec.z)
+            t4_point = new_point3d(line_origin.x + t4 * line_vec.x, line_origin.y + t4 * line_vec.y, line_origin.z + t4 * line_vec.z)
+
+            if t3_point.distance_to(t4_point) < tolerance:
+                return False,
+
+            return True, t3_point, t4_point
+
+        # case where both triangles slightly overlap each other
         else:
 
             t2_point = new_point3d(line_origin.x + t2 * line_vec.x, line_origin.y + t2 * line_vec.y, line_origin.z + t2 * line_vec.z)
