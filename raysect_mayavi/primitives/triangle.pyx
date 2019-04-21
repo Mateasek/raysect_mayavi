@@ -1,7 +1,7 @@
 
 
 from libc.math cimport abs
-from raysect.core.math cimport new_vector3d, new_point3d
+from raysect.core.math cimport Vector3D, new_vector3d, new_point3d
 
 
 cdef class Triangle:
@@ -10,12 +10,21 @@ cdef class Triangle:
                  double v2x, double v2y, double v2z,
                  double v3x, double v3y, double v3z):
 
+        cdef:
+            Vector3D v1v2, v1v3, cross
+
         self.v1 = new_point3d(v1x, v1y, v1z)
         self.v2 = new_point3d(v2x, v2y, v2z)
         self.v3 = new_point3d(v3x, v3y, v3z)
 
         self.vc = new_point3d((v1x + v2x + v3x) / 3, (v1y + v2y + v3y) / 3, (v1z + v2z + v3z) / 3)
-        self.normal = self.v1.vector_to(self.v2).cross(self.v1.vector_to(self.v3)).normalise()
+
+        v1v2 = self.v1.vector_to(self.v2)
+        v1v3 = self.v1.vector_to(self.v3)
+        cross = v1v2.cross(v1v3)
+
+        self.area = cross.get_length()
+        self.normal = cross.normalise()
 
 
 cpdef tuple triangle3d_intersects_triangle3d(Triangle triangle_1, Triangle triangle_2, double tolerance=1e-6):

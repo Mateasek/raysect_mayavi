@@ -185,14 +185,16 @@ cpdef Mesh perform_mesh_csg(Mesh mesh_1, Mesh mesh_2, CSG_Operator operator, dou
 
         # perform Delaunay triangulation
         vertices_2d = np.array(vertices_2d)
-        new_triangles = Delaunay(vertices_2d).simplices
+        triangle_candidates = Delaunay(vertices_2d).simplices
 
-        for new_tri_id in range(new_triangles.shape[0]):
-            tnew = build_triangle(m1_split_points[m1_tri_id], new_triangles, new_tri_id)
+        new_triangles = []
+        for new_tri_id in range(triangle_candidates.shape[0]):
+            tnew = build_triangle(m1_split_points[m1_tri_id], triangle_candidates, new_tri_id)
             if not t1.normal.dot(tnew.normal) > 0:
-                new_triangles[new_tri_id, 1], new_triangles[new_tri_id, 2] = new_triangles[new_tri_id, 2], new_triangles[new_tri_id, 1]
-
-        m1_new_triangles.extend(new_triangles + num_current_m1_vertices)
+                triangle_candidates[new_tri_id, 1], triangle_candidates[new_tri_id, 2] = triangle_candidates[new_tri_id, 2], triangle_candidates[new_tri_id, 1]
+            if tnew.area > tolerance**2:  # ignore ridiculously small triangles
+                new_triangles.append(triangle_candidates[new_tri_id])
+        m1_new_triangles.extend(np.array(new_triangles) + num_current_m1_vertices)
 
 
     for m2_tri_id in m2_split_points:
@@ -213,14 +215,16 @@ cpdef Mesh perform_mesh_csg(Mesh mesh_1, Mesh mesh_2, CSG_Operator operator, dou
 
         # perform Delaunay triangulation
         vertices_2d = np.array(vertices_2d)
-        new_triangles = Delaunay(vertices_2d).simplices
+        triangle_candidates = Delaunay(vertices_2d).simplices
 
-        for new_tri_id in range(new_triangles.shape[0]):
-            tnew = build_triangle(m2_split_points[m2_tri_id], new_triangles, new_tri_id)
+        new_triangles = []
+        for new_tri_id in range(triangle_candidates.shape[0]):
+            tnew = build_triangle(m2_split_points[m2_tri_id], triangle_candidates, new_tri_id)
             if not t2.normal.dot(tnew.normal) > 0:
-                new_triangles[new_tri_id, 1], new_triangles[new_tri_id, 2] = new_triangles[new_tri_id, 2], new_triangles[new_tri_id, 1]
-
-        m2_new_triangles.extend(new_triangles + num_current_m2_vertices)
+                triangle_candidates[new_tri_id, 1], triangle_candidates[new_tri_id, 2] = triangle_candidates[new_tri_id, 2], triangle_candidates[new_tri_id, 1]
+            if tnew.area > tolerance**2:  # ignore ridiculously small triangles
+                new_triangles.append(triangle_candidates[new_tri_id])
+        m2_new_triangles.extend(np.array(new_triangles) + num_current_m2_vertices)
 
     ####################################################################################################################
     # Recompute mesh KDTrees
