@@ -5,6 +5,7 @@ from scipy.spatial import Delaunay
 from raysect.core import Point3D, Vector3D
 from raysect.primitive import Mesh, Box, Sphere, Cylinder, Cone, Parabola, Intersect, Union, Subtract
 
+from raysect_mayavi.primitives.mesh_tools import subdivide
 from raysect_mayavi.primitives.mesh_csg import perform_mesh_csg
 from raysect_mayavi.primitives.mesh_csg import Intersect as IntersectOperator, Union as UnionOperator,Subtract as SubtractOperator
 
@@ -38,8 +39,11 @@ def box_to_mesh(box):
                  [4, 0, 5], [1, 5, 0],  # left face (y-z)
                  [2, 3, 7], [2, 7, 6]]  # right face (y-z)
 
-    vertices = np.array(vertices)
-    triangles = np.array(triangles)
+    mesh = Mesh(vertices, triangles)
+    mesh = subdivide(mesh)
+
+    vertices = np.array(mesh.data.vertices)
+    triangles = np.array(mesh.data.triangles)
 
     if box.parent:
         to_world = box.to_root()

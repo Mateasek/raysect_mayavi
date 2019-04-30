@@ -1,7 +1,7 @@
 
 from mayavi import mlab
 
-from raysect.core import translate, Point3D, rotate_basis, Vector3D
+from raysect.core import translate, Point3D, rotate_basis, Vector3D, rotate
 from raysect.optical import World
 from raysect.primitive import Box, Sphere, Cylinder, Cone
 from raysect.primitive import Sphere, Mesh, Intersect, Subtract, Union
@@ -119,5 +119,21 @@ input('pause...')
 
 world = World()
 Subtract(c1, c2, parent=world)
+visualise_scenegraph(world)
+input('pause...')
+
+
+########################################################################################################################
+# CSG Hell
+
+world = World()
+cyl_x = Cylinder(1, 4.2, transform=rotate(90, 0, 0)*translate(0, 0, -2.1))
+cyl_y = Cylinder(1, 4.2, transform=rotate(0, 90, 0)*translate(0, 0, -2.1))
+cyl_z = Cylinder(1, 4.2, transform=rotate(0, 0, 0)*translate(0, 0, -2.1))
+cube = Box(Point3D(-1.5, -1.5, -1.5), Point3D(1.5, 1.5, 1.5))
+sphere = Sphere(2.0)
+
+csg = Intersect(sphere, Subtract(cube, Union(Union(cyl_x, cyl_y), cyl_z)), world)
+
 visualise_scenegraph(world)
 input('pause...')
