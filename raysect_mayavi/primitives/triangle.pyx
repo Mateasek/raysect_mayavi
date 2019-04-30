@@ -24,6 +24,9 @@ cdef class Triangle:
         v1v3 = self.v1.vector_to(self.v3)
         cross = v1v2.cross(v1v3)
 
+        if cross.x == 0 and cross.y == 0 and cross.z == 0:
+            raise ValueError('The points specified do not define a valid 3D triangle.')
+
         self.area = cross.get_length()
         self.normal = cross.normalise()
 
