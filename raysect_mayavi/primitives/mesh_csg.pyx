@@ -7,6 +7,7 @@ from scipy.spatial import Delaunay, KDTree
 from raysect.core cimport Point3D, Vector3D, translate, rotate_basis, new_point3d
 
 from raysect_mayavi.primitives.triangle cimport Triangle, triangle3d_intersects_triangle3d
+from raysect_mayavi.primitives.weld_vertices import weld_vertices
 
 
 cdef class CSG_Operator:
@@ -189,7 +190,10 @@ cpdef Mesh perform_mesh_csg(Mesh mesh_1, Mesh mesh_2, CSG_Operator operator, dou
 
         new_triangles = []
         for new_tri_id in range(triangle_candidates.shape[0]):
-            tnew = build_triangle(m1_split_points[m1_tri_id], triangle_candidates, new_tri_id)
+            try:
+                tnew = build_triangle(m1_split_points[m1_tri_id], triangle_candidates, new_tri_id)
+            except ValueError:
+                continue
             if not t1.normal.dot(tnew.normal) > 0:
                 triangle_candidates[new_tri_id, 1], triangle_candidates[new_tri_id, 2] = triangle_candidates[new_tri_id, 2], triangle_candidates[new_tri_id, 1]
             if tnew.area > tolerance**2:  # ignore ridiculously small triangles
@@ -219,7 +223,10 @@ cpdef Mesh perform_mesh_csg(Mesh mesh_1, Mesh mesh_2, CSG_Operator operator, dou
 
         new_triangles = []
         for new_tri_id in range(triangle_candidates.shape[0]):
-            tnew = build_triangle(m2_split_points[m2_tri_id], triangle_candidates, new_tri_id)
+            try:
+                tnew = build_triangle(m2_split_points[m2_tri_id], triangle_candidates, new_tri_id)
+            except ValueError:
+                continue
             if not t2.normal.dot(tnew.normal) > 0:
                 triangle_candidates[new_tri_id, 1], triangle_candidates[new_tri_id, 2] = triangle_candidates[new_tri_id, 2], triangle_candidates[new_tri_id, 1]
             if tnew.area > tolerance**2:  # ignore ridiculously small triangles
@@ -295,7 +302,7 @@ cpdef Mesh perform_mesh_csg(Mesh mesh_1, Mesh mesh_2, CSG_Operator operator, dou
         if operator._m2(d_v_from_u):
             combined_triangles.append((m2_triangles[m2_tri_id, :] + n_m1_vertices).tolist())
 
-    return Mesh(combined_vertices, combined_triangles)
+    return weld_vertices(Mesh(combined_vertices, combined_triangles))
 
 
 cdef Triangle build_triangle(np.ndarray vertex_array, np.ndarray triangle_array, int triangle_id):
