@@ -4,6 +4,7 @@ from scipy.spatial import Delaunay
 
 from raysect.core import Point3D, Vector3D
 from raysect.primitive import Mesh, Box, Sphere, Cylinder, Cone, Parabola, Intersect, Union, Subtract
+from raysect.primitive.lens.spherical import BiConvex
 
 from raysect_mayavi.primitives.mesh_tools import subdivide
 from raysect_mayavi.primitives.mesh_csg import perform_mesh_csg
@@ -419,6 +420,10 @@ def csg_to_mesh(csg_primitive):
     return vertices, triangles
 
 
+def biconvex_to_mesh(biconvex_primitive):
+    return to_mesh(biconvex_primitive._primitive)
+
+
 _object_handlers = {
     Box: box_to_mesh,
     Sphere: sphere_to_mesh,
@@ -427,7 +432,8 @@ _object_handlers = {
     Mesh: mesh_to_mesh,
     Intersect: csg_to_mesh,
     Union: csg_to_mesh,
-    Subtract: csg_to_mesh
+    Subtract: csg_to_mesh,
+    BiConvex: biconvex_to_mesh
 }
 
 

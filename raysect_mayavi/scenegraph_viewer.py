@@ -14,7 +14,7 @@ def _parse_nodes(node, mesh_list):
         elif isinstance(child, Observer):
             return
         else:
-            mesh_list.append(to_mesh(child))
+            mesh_list.append((to_mesh(child), child.meta))
 
 
 def visualise_scenegraph(world, show_axes=False, axes_length=1):
@@ -29,13 +29,25 @@ def visualise_scenegraph(world, show_axes=False, axes_length=1):
 
     for mesh_description in meshes:
 
-        vertices, triangles = mesh_description
+        vertices, triangles = mesh_description[0]
         dx = vertices[:, 0]
         dy = vertices[:, 1]
         dz = vertices[:, 2]
 
-        mlab.triangular_mesh(dx, dy, dz, triangles, color=(163 / 255.0, 163 / 255.0, 163 / 255.0),
-                             figure=fig)  # , transparent=True, opacity=0.3)
+        meta = mesh_description[1]
+        try:
+            color = meta['viz-color']
+        except KeyError:
+            color = (163 / 255.0, 163 / 255.0, 163 / 255.0)
+        try:
+            opacity = meta['viz-opacity']
+            transparent = True
+        except KeyError:
+            opacity = 1
+            transparent = False
+
+        mlab.triangular_mesh(dx, dy, dz, triangles, color=color,
+                             figure=fig, transparent=transparent, opacity=opacity)
 
     if show_axes:
         mlab.plot3d([0, axes_length], [0, 0], [0, 0], tube_radius=axes_length/100, color=(1, 0, 0))
