@@ -364,7 +364,7 @@ def cone_to_mesh(cone, vertical_divisions=10, cylindrical_divisions=36, base_rad
 def mesh_to_mesh(mesh):
 
     vertices = mesh.data.vertices.copy()
-    triangles = mesh.data.triangles.copy()
+    triangles = mesh.data.triangles.copy()[:, 0:3]
 
     if mesh.parent:
         to_world = mesh.to_root()
