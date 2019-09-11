@@ -1,3 +1,4 @@
+# cython: language_level=3
 
 from raysect.core cimport Point3D, new_point3d
 
