@@ -4,11 +4,13 @@ from scipy.spatial import Delaunay
 
 from raysect.core import Point3D, Vector3D
 from raysect.primitive import Mesh, Box, Sphere, Cylinder, Cone, Parabola, Intersect, Union, Subtract
-from raysect.primitive.lens.spherical import BiConvex
+from raysect.primitive.lens.spherical import BiConvex, BiConcave, PlanoConvex, PlanoConcave, Meniscus
 
 from raysect_mayavi.primitives.mesh_tools import subdivide
 from raysect_mayavi.primitives.mesh_csg import perform_mesh_csg
 from raysect_mayavi.primitives.mesh_csg import Intersect as IntersectOperator, Union as UnionOperator,Subtract as SubtractOperator
+
+from raysect_mayavi.primitives.geometric import BiConvexLensSource, BiConcaveLensSource, PlanoConvexLensSource, PlanoConcaveLensSource, MeniscusLensSource, CylinderSource
 
 
 def box_to_mesh(box):
@@ -181,103 +183,9 @@ def sphere_to_mesh(sphere, subdivision_count=2):
 
 def cylinder_to_mesh(cylinder, vertical_divisions=10, cylindrical_divisions=36, radial_divisions=5):
 
-    if not isinstance(cylinder, Cylinder):
-        raise TypeError("The _cylinder_to_mesh() function takes a Raysect Cylinder primitive as an argument, "
-                        "wrong type '{}' given.".format(type(cylinder)))
+    cylinder = CylinderSource(cylinder, vertical_divisions, cylindrical_divisions, radial_divisions)
 
-    radius = cylinder.radius
-    height = cylinder.height
-
-    # first make the main cylinder
-    theta_step = 360 / cylindrical_divisions
-
-    vertices = []
-    for i in range(vertical_divisions):
-        z = (i / (vertical_divisions - 1)) * height
-        for j in range(cylindrical_divisions):
-            theta_rad = np.deg2rad(j * theta_step)
-            vertices.append([radius * np.cos(theta_rad), radius * np.sin(theta_rad), z])
-
-    triangles = []
-    for i in range(vertical_divisions - 1):
-
-        row_start = cylindrical_divisions * i
-        next_row_start = cylindrical_divisions * (i + 1)
-
-        for j in range(cylindrical_divisions):
-
-            v1 = row_start + j
-            if j != cylindrical_divisions - 1:
-                v2 = row_start + j + 1
-                v3 = next_row_start + j + 1
-            else:
-                v2 = row_start
-                v3 = next_row_start
-            v4 = next_row_start + j
-
-            triangles.append([v1, v2, v3])
-            triangles.append([v3, v4, v1])
-
-    def _make_cap_triangles(n_cylindrical_segments, n_radial_segments, radius, z_height):
-
-        working_cylindrical_segments = n_cylindrical_segments
-
-        cap_vertices = []
-
-        for i in range(n_radial_segments):
-
-            working_radius = radius * (1 - (i / n_radial_segments))
-            theta_step = 360 / working_cylindrical_segments
-
-            for j in range(working_cylindrical_segments):
-                theta_rad = np.deg2rad(j * theta_step)
-                cap_vertices.append([working_radius * np.cos(theta_rad), working_radius * np.sin(theta_rad), z_height])
-
-            working_cylindrical_segments -= int(n_cylindrical_segments/(n_radial_segments+1))
-            if working_cylindrical_segments < 5:
-                working_cylindrical_segments = 5
-
-        # Finally, add centre point
-        cap_vertices.append([0, 0, z_height])
-
-        vertices_2d = np.array(cap_vertices)[:, 0:2]
-
-        triangles = Delaunay(vertices_2d).simplices
-
-        return cap_vertices, triangles
-
-    # Make the upper and lower end caps
-    lower_cap_vertices, lower_cap_triangles = _make_cap_triangles(cylindrical_divisions, radial_divisions, radius, 0)
-    lower_cap_triangles = np.flip(lower_cap_triangles, 1)
-    lower_cap_triangles += len(vertices)
-    lower_cap_triangles = lower_cap_triangles.tolist()
-
-    vertices += lower_cap_vertices
-    triangles += lower_cap_triangles
-
-    upper_cap_vertices, upper_cap_triangles = _make_cap_triangles(cylindrical_divisions, radial_divisions, radius, height)
-    upper_cap_triangles += len(vertices)
-    upper_cap_triangles = upper_cap_triangles.tolist()
-
-    vertices += upper_cap_vertices
-    triangles += upper_cap_triangles
-
-    vertices = np.array(vertices)
-    triangles = np.array(triangles)
-
-    if cylinder.parent:
-        to_world = cylinder.to_root()
-    else:
-        to_world = cylinder.transform
-
-    # Convert vertices to positions in world coordinates
-    for i in range(vertices.shape[0]):
-        p = Point3D(vertices[i, 0], vertices[i, 1], vertices[i, 2]).transform(to_world)
-        vertices[i, 0] = p.x
-        vertices[i, 1] = p.y
-        vertices[i, 2] = p.z
-
-    return vertices, triangles
+    return cylinder.vertices, cylinder.triangles
 
 
 def cone_to_mesh(cone, vertical_divisions=10, cylindrical_divisions=36, base_radial_divisions=5):
@@ -420,8 +328,30 @@ def csg_to_mesh(csg_primitive):
     return vertices, triangles
 
 
-def biconvex_to_mesh(biconvex_primitive):
-    return to_mesh(biconvex_primitive._primitive)
+def biconvex_to_mesh(lens_primitive):
+    lens = BiConvexLensSource(lens_primitive)
+
+    return lens.vertices, lens.triangles
+
+def biconcave_to_mesh(lens_primitive):
+    lens = BiConcaveLensSource(lens_primitive)
+
+    return lens.vertices, lens.triangles
+
+def planoconvex_to_mesh(lens_primitive):
+    lens = PlanoConvexLensSource(lens_primitive)
+
+    return lens.vertices, lens.triangles
+
+def planoconcave_to_mesh(lens_primitive):
+    lens = PlanoConcaveLensSource(lens_primitive)
+
+    return lens.vertices, lens.triangles
+
+def meniscus_to_mesh(lens_primitive):
+    lens = MeniscusLensSource(lens_primitive)
+
+    return lens.vertices, lens.triangles
 
 
 _object_handlers = {
@@ -433,7 +363,11 @@ _object_handlers = {
     Intersect: csg_to_mesh,
     Union: csg_to_mesh,
     Subtract: csg_to_mesh,
-    BiConvex: biconvex_to_mesh
+    BiConvex: biconvex_to_mesh,
+    BiConcave: biconcave_to_mesh,
+    PlanoConvex: planoconvex_to_mesh,
+    PlanoConcave: planoconcave_to_mesh,
+    Meniscus: meniscus_to_mesh
 }
 
 
