@@ -1,5 +1,5 @@
 from raysect_mayavi.primitives.source import SourceMesh
-from raysect_mayavi.primitives.geometric.utility import triangulate_open_cylinder, triangulate_cylinder_lid, triangulate_spherical_cap
+from raysect_mayavi.primitives.geometric.utility import triangulate_parabolic_cap, triangulate_cylinder_lid
 from raysect_mayavi.primitives.weld_vertices import weld_vertices
 
 from raysect.primitive import Mesh
@@ -10,13 +10,9 @@ import numpy as np
 from math import sqrt
 
 
-class CylindricalSource(SourceMesh):
-    """
-    Class for creting mesh sources for objects with cylindrical symmetry e.g. cylinder and lenses. The mesh is composed
-    of 3 surfaces: front surface, back surface and an open cylinder surface.
-    """
+class ParabolaSource(SourceMesh):
 
-    def __init__(self, raysect_primitive, vertical_divisions=10, cylindrical_divisions=36, radial_divisions=5):
+    def __init__(self, raysect_primitive, cylindrical_divisions=36, radial_divisions=5):
 
         self._cap_vertices = None
         self._cap_triangles = None
@@ -55,18 +51,17 @@ class CylindricalSource(SourceMesh):
         """
 
         self._cap_vertices, self._cap_triangles = triangulate_cylinder_lid(self._raysect_primitive.radius,
-                                                       self.radial_divisions)
+                                                                           self.radial_divisions,
+                                                                           cylindrical_divisions=self.cylindrical_divisions)
 
     def _generate_parabola_surface(self):
 
+        if self._cap_vertices is None:
+            self._generate_cap_surface()
 
-        radius = self._raysect_primitive.radius
-        height = self._raysect_primitive.height
+        edge = self._cap_vertices[0:self.cylindrical_divisions, 0:2]
+        self._parabola_vertices, self._parabola_triangles = triangulate_parabolic_cap(self._raysect_primitive.height,
+                                                                                      self.raysect_primitive.radius,
+                                                                                      self.radial_divisions,
+                                                                                      edge_vertices=edge)
 
-
-        k = height / (radius * radius)
-        a = k * (direction.x * direction.x + direction.y * direction.y)
-        b = 2 * k * (direction.x * origin.x + direction.y * origin.y) + direction.z
-        c = k * (origin.x * origin.x + origin.y * origin.y) - (height - origin.z)
-
-        edge = self._barrel_vertices[-self.cylindrical_divisions::, 0:2]

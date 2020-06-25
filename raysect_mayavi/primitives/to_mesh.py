@@ -10,7 +10,7 @@ from raysect_mayavi.primitives.mesh_tools import subdivide
 from raysect_mayavi.primitives.mesh_csg import perform_mesh_csg
 from raysect_mayavi.primitives.mesh_csg import Intersect as IntersectOperator, Union as UnionOperator,Subtract as SubtractOperator
 
-from raysect_mayavi.primitives.geometric import BiConvexLensSource, BiConcaveLensSource, PlanoConvexLensSource, PlanoConcaveLensSource, MeniscusLensSource, CylinderSource
+from raysect_mayavi.primitives.geometric import BiConvexLensSource, BiConcaveLensSource, PlanoConvexLensSource, PlanoConcaveLensSource, MeniscusLensSource, CylinderSource, ParabolaSource
 
 
 def box_to_mesh(box):
@@ -353,6 +353,11 @@ def meniscus_to_mesh(lens_primitive):
 
     return lens.vertices, lens.triangles
 
+def parabola_to_mesh(parabola_primitive):
+
+    parabola = ParabolaSource(parabola_primitive)
+
+    return parabola.vertices, parabola.triangles
 
 _object_handlers = {
     Box: box_to_mesh,
@@ -367,7 +372,8 @@ _object_handlers = {
     BiConcave: biconcave_to_mesh,
     PlanoConvex: planoconvex_to_mesh,
     PlanoConcave: planoconcave_to_mesh,
-    Meniscus: meniscus_to_mesh
+    Meniscus: meniscus_to_mesh,
+    Parabola: parabola_to_mesh
 }
 
 
