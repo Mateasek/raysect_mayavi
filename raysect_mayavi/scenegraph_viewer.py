@@ -1,32 +1,20 @@
 
 from mayavi import mlab
 
-from raysect.core import Observer, World, Point3D, Vector3D, Node, Primitive
+from raysect.core import Observer, World, Point3D, Vector3D, Node
 from raysect_mayavi.primitives import to_mesh
 
 
-def parse_nodes(node, mesh_dict=None):
-    """
-    The method searches a Raysect scenegraph and creates a dictionary with primitive representations.
-    :param node: A raysect.core.World or raysect.core.Node instance to be searched
-    :param mesh_dict: A python dictionary to add primitive representations to
-    
-    :return A python dictionary with keys being raysect primitives and items being their representations.
-    """
-    
-    if not isinstance(node, Node) and not isinstance(node, World):
-        raise TypeError("node has to be an instance of raysect.core.Node or raysect.core.World")
-    
-    if mesh_dict is None:
-        mesh_dict = {}
-    
-    for child in node.children:
-        mesh_dict = parse_nodes(child, mesh_dict)
-        
-        if isinstance(child, Primitive):
-            mesh_dict[child] = {"primitive":to_mesh(child), "meta": child.meta}
+def _parse_nodes(node, mesh_list):
 
-    return mesh_dict
+    for child in node.children:
+
+        if type(child) == Node:
+            _parse_nodes(child, mesh_list)
+        elif isinstance(child, Observer):
+            return
+        else:
+            mesh_list.append((to_mesh(child), child.meta))
 
 
 def visualise_scenegraph(world, show_axes=False, axes_length=1):
@@ -36,16 +24,17 @@ def visualise_scenegraph(world, show_axes=False, axes_length=1):
 
     fig = mlab.figure(size=(1024, 768), bgcolor=(1, 1, 1), fgcolor=(0.5, 0.5, 0.5))
 
-    meshes = parse_nodes(world)
+    meshes = []
+    _parse_nodes(world, meshes)
 
-    for raysect_primitive, mesh_description in meshes.items():
+    for mesh_description in meshes:
 
-        vertices, triangles = mesh_description["primitive"]
+        vertices, triangles = mesh_description[0]
         dx = vertices[:, 0]
         dy = vertices[:, 1]
         dz = vertices[:, 2]
 
-        meta = mesh_description["meta"]
+        meta = mesh_description[1]
         try:
             color = meta['viz-color']
         except KeyError:
@@ -54,7 +43,7 @@ def visualise_scenegraph(world, show_axes=False, axes_length=1):
             opacity = meta['viz-opacity']
             transparent = True
         except KeyError:
-            opacity = 0.1
+            opacity = 1
             transparent = False
 
         mlab.triangular_mesh(dx, dy, dz, triangles, color=color,
