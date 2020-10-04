@@ -1,20 +1,32 @@
 
 from mayavi import mlab
 
-from raysect.core import Observer, World, Point3D, Vector3D, Node
+from raysect.core import Observer, World, Point3D, Vector3D, Node, Primitive
 from raysect_mayavi.primitives import to_mesh
 
 
-def _parse_nodes(node, mesh_list):
-
+def parse_nodes(node, mesh_dict=None):
+    """
+    The method searches a Raysect scenegraph and creates a dictionary with primitive representations.
+    :param node: A raysect.core.World or raysect.core.Node instance to be searched
+    :param mesh_dict: A python dictionary to add primitive representations to
+    
+    :return A python dictionary with keys being raysect primitives and items being their representations.
+    """
+    
+    if not isinstance(node, Node) and not isinstance(node, World):
+        raise TypeError("node has to be an instance of raysect.core.Node or raysect.core.World")
+    
+    if mesh_dict is None:
+        mesh_dict = {}
+    
     for child in node.children:
+        mesh_dict = parse_nodes(child, mesh_dict)
+        
+        if isinstance(child, Primitive):
+            mesh_dict[child] = {"primitive":to_mesh(child), "meta": child.meta}
 
-        if type(child) == Node:
-            _parse_nodes(child, mesh_list)
-        elif isinstance(child, Observer):
-            return
-        else:
-            mesh_list.append((to_mesh(child), child.meta))
+    return mesh_dict
 
 
 def visualise_scenegraph(world, show_axes=False, axes_length=1):
@@ -24,17 +36,16 @@ def visualise_scenegraph(world, show_axes=False, axes_length=1):
 
     fig = mlab.figure(size=(1024, 768), bgcolor=(1, 1, 1), fgcolor=(0.5, 0.5, 0.5))
 
-    meshes = []
-    _parse_nodes(world, meshes)
+    meshes = parse_nodes(world)
 
-    for mesh_description in meshes:
+    for raysect_primitive, mesh_description in meshes.items():
 
-        vertices, triangles = mesh_description[0]
+        vertices, triangles = mesh_description["primitive"]
         dx = vertices[:, 0]
         dy = vertices[:, 1]
         dz = vertices[:, 2]
 
-        meta = mesh_description[1]
+        meta = mesh_description["meta"]
         try:
             color = meta['viz-color']
         except KeyError:
