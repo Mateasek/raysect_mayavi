@@ -113,7 +113,7 @@ class TriangularMeshSource(MayaviSource):
 
     @property
     def triangles(self):
-        return self._raysect_mesh.data.triangles
+        return self._raysect_mesh.data.triangles[:,0:3]
 
     def _mayavi_plot(self, figure):
         vertices = self._vertices_root()
