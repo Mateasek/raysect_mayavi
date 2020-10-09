@@ -77,7 +77,7 @@ _object_handlers = {
     Subtract: CSGMeshSource,
     BiConvex: BiConvexLensSource,
     BiConcave: BiConcaveLensSource,
-    PlanoConvex: PlanoConcaveLensSource,
+    PlanoConvex: PlanoConvexLensSource,
     PlanoConcave: PlanoConcaveLensSource,
     Meniscus: MeniscusLensSource,
     Parabola: ParabolaSource,
