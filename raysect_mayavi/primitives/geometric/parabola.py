@@ -1,18 +1,18 @@
-from raysect_mayavi.primitives.source import SourceMesh
-from raysect_mayavi.primitives.geometric.utility import triangulate_parabolic_cap, triangulate_cylinder_lid
-from raysect_mayavi.primitives.weld_vertices import weld_vertices
-
-from raysect.primitive import Mesh
-from raysect.primitive import Cylinder
-from raysect.primitive.lens.spherical import BiConvex, BiConcave, PlanoConvex, PlanoConcave, Meniscus
-
 import numpy as np
 from math import sqrt
 
+from raysect_mayavi.primitives.source import TriangularMeshSource
+from raysect_mayavi.primitives.geometric.utility import triangulate_parabolic_cap, triangulate_cylinder_lid
+from raysect_mayavi.primitives.weld_vertices import weld_vertices
 
-class ParabolaSource(SourceMesh):
+from raysect.primitive import Mesh, Parabola
 
-    def __init__(self, raysect_primitive, cylindrical_divisions=36, radial_divisions=5):
+class ParabolaSource(TriangularMeshSource):
+
+    def __init__(self, raysect_object, cylindrical_divisions=36, radial_divisions=5):
+
+        if not isinstance(raysect_object, Parabola):
+            raise TypeError("The raysect_object has to be instance of Raysect Parabola primitive, wrong type '{}' given.".format(type(raysect_object)))
 
         self._cap_vertices = None
         self._cap_triangles = None
@@ -22,9 +22,9 @@ class ParabolaSource(SourceMesh):
         self.cylindrical_divisions = cylindrical_divisions
         self.radial_divisions = radial_divisions
 
-        super().__init__(raysect_primitive)
+        super().__init__(raysect_object)
 
-    def _mesh_from_primitive(self):
+    def _mayavi_source_from_raysect_object(self):
 
         if self._cap_vertices is None or self._cap_triangles is None:
             self._generate_cap_surface()
@@ -50,7 +50,7 @@ class ParabolaSource(SourceMesh):
         :return:
         """
 
-        self._cap_vertices, self._cap_triangles = triangulate_cylinder_lid(self._raysect_primitive.radius,
+        self._cap_vertices, self._cap_triangles = triangulate_cylinder_lid(self._raysect_object.radius,
                                                                            self.radial_divisions,
                                                                            cylindrical_divisions=self.cylindrical_divisions)
 
@@ -60,8 +60,8 @@ class ParabolaSource(SourceMesh):
             self._generate_cap_surface()
 
         edge = self._cap_vertices[0:self.cylindrical_divisions, 0:2]
-        self._parabola_vertices, self._parabola_triangles = triangulate_parabolic_cap(self._raysect_primitive.height,
-                                                                                      self.raysect_primitive.radius,
+        self._parabola_vertices, self._parabola_triangles = triangulate_parabolic_cap(self._raysect_object.height,
+                                                                                      self.raysect_object.radius,
                                                                                       self.radial_divisions,
                                                                                       edge_vertices=edge)
 
