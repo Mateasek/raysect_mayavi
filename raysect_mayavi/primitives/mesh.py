@@ -1,8 +1,9 @@
-
 from raysect.primitive import Mesh, Box, Sphere, Cylinder, Cone, Parabola, Intersect, Union, Subtract
 from raysect.primitive.csg import CSGPrimitive
 from raysect.primitive.lens.spherical import BiConvex, BiConcave, PlanoConvex, PlanoConcave, Meniscus
 from raysect.optical.loggingray import LoggingRay
+from raysect.optical.observer import SightLine, FibreOptic, Pixel, TargettedPixel, MeshPixel, MeshCamera
+from raysect.optical.observer import CCDArray, TargettedCCDArray, OrthographicCamera, PinholeCamera, VectorCamera
 
 from raysect_mayavi.primitives.mesh_tools import subdivide
 from raysect_mayavi.primitives.mesh_csg import perform_mesh_csg
@@ -11,8 +12,8 @@ from raysect_mayavi.primitives.geometric import BoxSource, SphereSource, Cylinde
 from raysect_mayavi.primitives.geometric import BiConvexLensSource, BiConcaveLensSource, PlanoConvexLensSource, PlanoConcaveLensSource, MeniscusLensSource
 from raysect_mayavi.primitives.ray import LoggingRaySource
 from raysect_mayavi.primitives.source import TriangularMeshSource
+from raysect_mayavi.primitives.observer import ObserverSource
 from raysect_mayavi.primitives.mesh_tools import subdivide
-
 
 class MeshSource(TriangularMeshSource):
     """
@@ -81,7 +82,18 @@ _object_handlers = {
     PlanoConcave: PlanoConcaveLensSource,
     Meniscus: MeniscusLensSource,
     Parabola: ParabolaSource,
-    LoggingRay: LoggingRaySource
+    LoggingRay: LoggingRaySource,
+    SightLine: ObserverSource,
+    FibreOptic: ObserverSource,
+    Pixel: ObserverSource,
+    TargettedPixel: ObserverSource,
+    MeshPixel: ObserverSource,
+    MeshCamera: ObserverSource,
+    CCDArray: ObserverSource,
+    TargettedCCDArray: ObserverSource,
+    OrthographicCamera: ObserverSource,
+    PinholeCamera: ObserverSource,
+    VectorCamera: ObserverSource
  }
 
 

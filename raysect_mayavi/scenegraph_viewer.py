@@ -23,7 +23,7 @@ def parse_nodes(node, mesh_dict=None):
     for child in node.children:
         mesh_dict = parse_nodes(child, mesh_dict)
         
-        if isinstance(child, Primitive):
+        if isinstance(child, Primitive) or isinstance(child, Observer):
             mesh_dict[child] = to_mesh(child)
 
     return mesh_dict
