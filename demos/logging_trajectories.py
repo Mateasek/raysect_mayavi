@@ -54,24 +54,18 @@ for v in np.linspace(-0.012, 0.012, 11):
 
 
 from raysect_mayavi import visualise_scenegraph
+from raysect_mayavi import to_mesh
 from mayavi import mlab
 
 
-visualise_scenegraph(world)
-
+fig = visualise_scenegraph(world)
 
 for v in np.linspace(-0.012, 0.012, 11):
-
     start = Point3D(v, 0, -0.05)
     log_ray = LoggingRay(start, Vector3D(0, 0, 1))
     log_ray.trace(world)
-
-    vertices = log_ray.path_vertices
-
-    p = [(v.x, v.y, v.z) for v in vertices]
-    p = np.array(p)
-
-    mlab.plot3d(p[:, 0], p[:, 1], p[:, 2], tube_radius=0.0005)
+    log_ray_mayavi = to_mesh(log_ray)
+    log_ray_mayavi.mayavi_plot(fig)
 
 plt.ioff()
 plt.show()
