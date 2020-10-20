@@ -8,7 +8,8 @@ from mayavi import mlab
 
 class LoggingRaySource(MayaviSource):
     """
-    Class for graphical representation of the Raysect LoggingRay primitive.
+    Class for graphical representation of the Raysect LoggingRay primitive. To display correctly with other scenegraph 
+    components observation has to be usualy done in the root node (an instance of World) of the scenegraph.
     :param raysect_object: Raysect Loggingray instance containing path_vertices
     """
 
