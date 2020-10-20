@@ -13,16 +13,16 @@ def parse_nodes(node, mesh_dict=None):
     
     :return A python dictionary with keys being raysect primitives and items being their representations.
     """
-    
+
     if not isinstance(node, Node) and not isinstance(node, World):
         raise TypeError("node has to be an instance of raysect.core.Node or raysect.core.World")
-    
+
     if mesh_dict is None:
         mesh_dict = {}
-    
+
     for child in node.children:
         mesh_dict = parse_nodes(child, mesh_dict)
-        
+
         if isinstance(child, Primitive) or isinstance(child, Observer):
             mesh_dict[child] = to_mesh(child)
 
@@ -30,10 +30,13 @@ def parse_nodes(node, mesh_dict=None):
 
 
 def visualise_scenegraph(world, figure=None, show_axes=False, axes_length=1):
-
+    """
+    Automatic visualisation of the raysect scenegraph.
+    :param world: Instance of the Raysect World 
+    """
     if not isinstance(world, World):
         raise TypeError("The visualisation function takes a Raysect World object as its argument.")
-    
+
     if figure is None:
         figure = mlab.figure(size=(1024, 768), bgcolor=(1, 1, 1), fgcolor=(0.5, 0.5, 0.5))
 

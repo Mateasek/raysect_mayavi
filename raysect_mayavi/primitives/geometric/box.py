@@ -1,25 +1,25 @@
-from raysect_mayavi.primitives.source import TriangularMeshSource
-from raysect_mayavi.primitives.mesh_tools import subdivide
-
 from raysect.core import Point3D
 from raysect.primitive import Box, Mesh
+
+from raysect_mayavi.primitives.source import TriangularMeshSource
+from raysect_mayavi.primitives.mesh_tools import subdivide
 
 
 class BoxSource(TriangularMeshSource):
     """
-    Triangular mesh representation of the Raysect Box primitive.
-    :param raysect_object: Raysect Box primitive
+    Class for graphical representation of the Raysect Box primitive.
+    :param raysect_object: Raysect Box primitive instance
     """
 
     def __init__(self, raysect_object):
-        
+
         if not isinstance(raysect_object, Box):
             raise TypeError("The raysect_object has to be instance of Raysect Box primitive, wrong type '{}' given.".format(type(raysect_object)))
-        
+
         super().__init__(raysect_object)
-        
+
     def _mayavi_source_from_raysect_object(self):
-         
+
         lower = self._raysect_object.lower
         upper = self._raysect_object.upper
         # more negative face in x-z plane
@@ -45,6 +45,3 @@ class BoxSource(TriangularMeshSource):
 
         mesh = Mesh(vertices, triangles)
         self._raysect_mesh = subdivide(mesh)
-
-        
-        

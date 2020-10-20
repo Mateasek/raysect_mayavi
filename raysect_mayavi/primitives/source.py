@@ -20,7 +20,6 @@ class MayaviSource:
         self.figure_kwargs["size"] = (1024, 768)
         self.figure_kwargs["bgcolor"] = (1, 1, 1)
         self.figure_kwargs["fgcolor"] = (0.5, 0.5, 0.5)
-        
 
     def _mayavi_source_from_raysect_object(self):
         """
@@ -31,7 +30,8 @@ class MayaviSource:
 
     def mayavi_plot(self, figure=None):
         """
-        Plot the Mayavi representation of the Raysect object into the figure. The representation is done always in the root node.
+        Plot the Mayavi representation of the Raysect object into the figure. The representation is done always
+        in the root node.
         :param figure:Optional, specifies the figure to plot in.
         return mayavi figure
         """
@@ -43,21 +43,23 @@ class MayaviSource:
         self._mayavi_plot(figure)
 
         return figure
-    
+
     def _mayavi_plot(self, figure):
         raise NotImplementedError("Virtual method _mayavi_plot() has not been implemented.")
 
 class TriangularMeshSource(MayaviSource):
-
+    """
+    This class serves as base class for Raysect objetcs visualised with triangular meshses.
+    """
     def __init__(self, raysect_object):
 
         self._raysect_mesh = None
         self._init_plot_kwargs()
 
         super().__init__(raysect_object)
-        
-        self.plot_method = mlab.triangular_mesh    
-         
+
+        self.plot_method = mlab.triangular_mesh
+
     def _init_plot_kwargs(self):
         self.plot_kwargs = {}
         self.plot_kwargs["color"] = (163 / 255.0, 163 / 255.0, 163 / 255.0)
@@ -70,20 +72,19 @@ class TriangularMeshSource(MayaviSource):
         else:
             to_world = self._raysect_object.transform
         return self._vertices_transform(to_world)
-    
+
     def vertices_node(self, node):
         transform = self._raysect_object.to(node) 
-        return self._vertices_transform(to_world)
-     
+        return self._vertices_transform(transform)
+
     def _vertices_transform(self, transform):
         vertices = self._raysect_mesh.data.vertices.copy()
 
-
         for i in range(vertices.shape[0]):
-            p = Point3D(vertices[i, 0], vertices[i, 1], vertices[i, 2]).transform(transform)
-            vertices[i, 0] = p.x
-            vertices[i, 1] = p.y
-            vertices[i, 2] = p.z
+            point = Point3D(vertices[i, 0], vertices[i, 1], vertices[i, 2]).transform(transform)
+            vertices[i, 0] = point.x
+            vertices[i, 1] = point.y
+            vertices[i, 2] = point.z
 
         return vertices
 

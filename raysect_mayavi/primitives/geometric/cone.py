@@ -8,12 +8,16 @@ from raysect_mayavi.primitives.geometric.utility import triangulate_cylinder_lid
 
 
 class ConeSource(TriangularMeshSource):
+    """
+    Class for graphical representation of the Raysect Cone primitive.
+    :param raysect_object: Raysect Cone primitive instance
+    :param subdivision_count: Number of subdivisions to perform on the basic icosohedren with 12 vertices and 20 faces
+    """
 
     def __init__(self, raysect_object, vertical_divisions=10, cylindrical_divisions=36, radial_divisions=5):
 
         if not isinstance(raysect_object, Cone):
             raise TypeError("The raysect_object has to be instance of Raysect Cone primitive, wrong type '{}' given.".format(type(raysect_object)))
-
 
         self._cap_vertices = None
         self._cap_triangles = None
@@ -25,7 +29,6 @@ class ConeSource(TriangularMeshSource):
         self.vertical_divisions = vertical_divisions
 
         super().__init__(raysect_object)
-
 
     def _mayavi_source_from_raysect_object(self):
 

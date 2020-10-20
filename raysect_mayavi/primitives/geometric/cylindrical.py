@@ -59,7 +59,7 @@ class CylindricalSource(TriangularMeshSource):
         mesh = Mesh(vertices=vertices, triangles=triangles)
         self._raysect_mesh = weld_vertices(mesh)
 
-    def _generate_barrel_mesh(self):
+    def _generate_barrel_surface_mesh(self):
         """
         Generates triangular mesh for the barrel surface.
         :return:
@@ -82,6 +82,13 @@ class CylindricalSource(TriangularMeshSource):
 
 
 class CylinderSource(CylindricalSource):
+    """
+    Class for graphical representation of the Raysect Cylinder primitive.
+    :param raysect_object: Raysect Cone primitive instance
+    :param vertical_divisions: Number of divisions of the barrel cylinder surface along the z axis (default is 10)
+    :param cylindrical_divisions: Number of angular divisions of the cylinder surfaces (default is 36)
+    :param radial_divisions: Nuber of radial divisions of the cylinder cap surfaces (default is 5)
+    """
 
     def __init__(self, raysect_object, vertical_divisions=10, cylindrical_divisions=36, radial_divisions=5):
 
@@ -90,7 +97,7 @@ class CylinderSource(CylindricalSource):
 
         super().__init__(raysect_object, vertical_divisions, cylindrical_divisions, radial_divisions)
 
-    def _generate_barrel_mesh(self):
+    def _generate_barrel_surface_mesh(self):
 
         radius = self.raysect_object.radius
         height = self.raysect_object.height
@@ -104,7 +111,7 @@ class CylinderSource(CylindricalSource):
     def _generate_front_surface_mesh(self):
 
         if self._barrel_vertices is None or self._barrel_triangles is None:
-            self._generate_barrel_mesh()
+            self._generate_barrel_surface_mesh()
 
         radius = self.raysect_object.radius
         edge = self._barrel_vertices[0:self.cylindrical_divisions, 0:2]
@@ -119,7 +126,7 @@ class CylinderSource(CylindricalSource):
     def _generate_back_surface_mesh(self):
 
         if self._barrel_vertices is None or self._barrel_triangles is None:
-            self._generate_barrel_mesh()
+            self._generate_barrel_surface_mesh()
 
         radius = self.raysect_object.radius
         edge = self._barrel_vertices[0:self.cylindrical_divisions, 0:2]
@@ -131,6 +138,13 @@ class CylinderSource(CylindricalSource):
 
 
 class BiConvexLensSource(CylindricalSource):
+    """
+    Class for graphical representation of the Raysect BiConvex lens primitive.
+    :param raysect_object: Raysect Biconvex primitive instance
+    :param vertical_divisions: Number of divisions of the barrel cylinder surface along the z axis (default is 10)
+    :param cylindrical_divisions: Number of angular divisions of the lens surfaces (default is 36)
+    :param radial_divisions: Nuber of radial divisions of the front and back lens surfaces (default is 5)
+    """
 
     def __init__(self, raysect_object, vertical_divisions=10, cylindrical_divisions=36, radial_divisions=5):
 
@@ -139,7 +153,7 @@ class BiConvexLensSource(CylindricalSource):
 
         super().__init__(raysect_object, vertical_divisions, cylindrical_divisions, radial_divisions)
 
-    def _generate_barrel_mesh(self):
+    def _generate_barrel_surface_mesh(self):
 
         radius = 0.5 * self.raysect_object.diameter
         height = self.raysect_object.edge_thickness
@@ -156,7 +170,7 @@ class BiConvexLensSource(CylindricalSource):
     def _generate_front_surface_mesh(self):
 
         if self._barrel_vertices is None or self._barrel_triangles is None:
-            self._generate_barrel_mesh()
+            self._generate_barrel_surface_mesh()
 
         radius = 0.5 * self.raysect_object.diameter
         edge = self._barrel_vertices[-self.cylindrical_divisions::, 0:2]
@@ -177,7 +191,7 @@ class BiConvexLensSource(CylindricalSource):
     def _generate_back_surface_mesh(self):
 
         if self._barrel_vertices is None or self._barrel_triangles is None:
-            self._generate_barrel_mesh()
+            self._generate_barrel_surface_mesh()
 
         radius = 0.5 * self.raysect_object.diameter
         edge = self._barrel_vertices[0:self.cylindrical_divisions, 0:2]
@@ -196,6 +210,13 @@ class BiConvexLensSource(CylindricalSource):
 
 
 class BiConcaveLensSource(CylindricalSource):
+    """
+    Class for graphical representation of the Raysect BiConcave lens primitive.
+    :param raysect_object: Raysect BiConcave primitive instance
+    :param vertical_divisions: Number of divisions of the barrel cylinder surface along the z axis (default is 10)
+    :param cylindrical_divisions: Number of angular divisions of the lens surfaces (default is 36)
+    :param radial_divisions: Nuber of radial divisions of the front and back lens surfaces (default is 5)
+    """
 
     def __init__(self, raysect_object, vertical_divisions=10, cylindrical_divisions=36, radial_divisions=5):
 
@@ -204,7 +225,7 @@ class BiConcaveLensSource(CylindricalSource):
 
         super().__init__(raysect_object, vertical_divisions, cylindrical_divisions, radial_divisions)
 
-    def _generate_barrel_mesh(self):
+    def _generate_barrel_surface_mesh(self):
 
         radius = 0.5 * self.raysect_object.diameter
         height = self.raysect_object.edge_thickness
@@ -221,7 +242,7 @@ class BiConcaveLensSource(CylindricalSource):
     def _generate_front_surface_mesh(self):
 
         if self._barrel_vertices is None or self._barrel_triangles is None:
-            self._generate_barrel_mesh()
+            self._generate_barrel_surface_mesh()
 
         radius = 0.5 * self.raysect_object.diameter
         edge = self._barrel_vertices[-self.cylindrical_divisions::, 0:2]
@@ -242,7 +263,7 @@ class BiConcaveLensSource(CylindricalSource):
     def _generate_back_surface_mesh(self):
 
         if self._barrel_vertices is None or self._barrel_triangles is None:
-            self._generate_barrel_mesh()
+            self._generate_barrel_surface_mesh()
 
         radius = 0.5 * self.raysect_object.diameter
         edge = self._barrel_vertices[0:self.cylindrical_divisions, 0:2]
@@ -261,6 +282,13 @@ class BiConcaveLensSource(CylindricalSource):
 
 
 class PlanoConvexLensSource(CylindricalSource):
+    """
+    Class for graphical representation of the Raysect PlanoConvex lens primitive.
+    :param raysect_object: Raysect PlanoConvex primitive instance
+    :param vertical_divisions: Number of divisions of the barrel cylinder surface along the z axis (default is 10)
+    :param cylindrical_divisions: Number of angular divisions of the lens surfaces (default is 36)
+    :param radial_divisions: Nuber of radial divisions of the front and back lens surfaces (default is 5)
+    """
 
     def __init__(self, raysect_object, vertical_divisions=10, cylindrical_divisions=36, radial_divisions=5):
 
@@ -269,7 +297,7 @@ class PlanoConvexLensSource(CylindricalSource):
 
         super().__init__(raysect_object, vertical_divisions, cylindrical_divisions, radial_divisions)
 
-    def _generate_barrel_mesh(self):
+    def _generate_barrel_surface_mesh(self):
 
         radius = 0.5 * self.raysect_object.diameter
         height = self.raysect_object.edge_thickness
@@ -283,7 +311,7 @@ class PlanoConvexLensSource(CylindricalSource):
     def _generate_front_surface_mesh(self):
 
         if self._barrel_vertices is None or self._barrel_triangles is None:
-            self._generate_barrel_mesh()
+            self._generate_barrel_surface_mesh()
 
         radius = 0.5 * self.raysect_object.diameter
         edge = self._barrel_vertices[-self.cylindrical_divisions::, 0:2]
@@ -304,7 +332,7 @@ class PlanoConvexLensSource(CylindricalSource):
     def _generate_back_surface_mesh(self):
 
         if self._barrel_vertices is None or self._barrel_triangles is None:
-            self._generate_barrel_mesh()
+            self._generate_barrel_surface_mesh()
 
         radius = 0.5 * self.raysect_object.diameter
         edge = self._barrel_vertices[0:self.cylindrical_divisions, 0:2]
@@ -316,6 +344,13 @@ class PlanoConvexLensSource(CylindricalSource):
 
 
 class PlanoConcaveLensSource(CylindricalSource):
+    """
+    Class for graphical representation of the Raysect PlanoConcave lens primitive.
+    :param raysect_object: Raysect PlanoConcave primitive instance
+    :param vertical_divisions: Number of divisions of the barrel cylinder surface along the z axis (default is 10)
+    :param cylindrical_divisions: Number of angular divisions of the lens surfaces (default is 36)
+    :param radial_divisions: Nuber of radial divisions of the front and back lens surfaces (default is 5)
+    """
 
     def __init__(self, raysect_object, vertical_divisions=10, cylindrical_divisions=36, radial_divisions=5):
 
@@ -324,7 +359,7 @@ class PlanoConcaveLensSource(CylindricalSource):
 
         super().__init__(raysect_object, vertical_divisions, cylindrical_divisions, radial_divisions)
 
-    def _generate_barrel_mesh(self):
+    def _generate_barrel_surface_mesh(self):
 
         radius = 0.5 * self.raysect_object.diameter
         height = self.raysect_object.edge_thickness
@@ -338,7 +373,7 @@ class PlanoConcaveLensSource(CylindricalSource):
     def _generate_front_surface_mesh(self):
 
         if self._barrel_vertices is None or self._barrel_triangles is None:
-            self._generate_barrel_mesh()
+            self._generate_barrel_surface_mesh()
 
         radius = 0.5 * self.raysect_object.diameter
         edge = self._barrel_vertices[-self.cylindrical_divisions::, 0:2]
@@ -359,7 +394,7 @@ class PlanoConcaveLensSource(CylindricalSource):
     def _generate_back_surface_mesh(self):
 
         if self._barrel_vertices is None or self._barrel_triangles is None:
-            self._generate_barrel_mesh()
+            self._generate_barrel_surface_mesh()
 
         radius = 0.5 * self.raysect_object.diameter
         edge = self._barrel_vertices[0:self.cylindrical_divisions, 0:2]
@@ -371,6 +406,13 @@ class PlanoConcaveLensSource(CylindricalSource):
 
 
 class MeniscusLensSource(CylindricalSource):
+    """
+    Class for graphical representation of the Raysect Meniscus lens primitive.
+    :param raysect_object: Raysect Meniscus primitive instance
+    :param vertical_divisions: Number of divisions of the barrel cylinder surface along the z axis (default is 10)
+    :param cylindrical_divisions: Number of angular divisions of the lens surfaces (default is 36)
+    :param radial_divisions: Nuber of radial divisions of the front and back lens surfaces (default is 5)
+    """
 
     def __init__(self, raysect_object, vertical_divisions=10, cylindrical_divisions=36, radial_divisions=5):
 
@@ -396,7 +438,7 @@ class MeniscusLensSource(CylindricalSource):
     def _generate_front_surface_mesh(self):
 
         if self._barrel_vertices is None or self._barrel_triangles is None:
-            self._generate_barrel_mesh()
+            self._generate_barrel_surface_mesh()
 
         radius = 0.5 * self.raysect_object.diameter
         edge = self._barrel_vertices[-self.cylindrical_divisions::, 0:2]
@@ -417,7 +459,7 @@ class MeniscusLensSource(CylindricalSource):
     def _generate_back_surface_mesh(self):
 
         if self._barrel_vertices is None or self._barrel_triangles is None:
-            self._generate_barrel_mesh()
+            self._generate_barrel_surface_mesh()
 
         radius = 0.5 * self.raysect_object.diameter
         edge = self._barrel_vertices[0:self.cylindrical_divisions, 0:2]

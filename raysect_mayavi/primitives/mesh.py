@@ -17,36 +17,37 @@ from raysect_mayavi.primitives.mesh_tools import subdivide
 
 class MeshSource(TriangularMeshSource):
     """
-    Triangular mesh representation of the Raysect Mesh primitive.
-    :param raysect_object: Raysect Box primitive
+    Class for graphical representation of the Raysect Mesh primitive.
+    :param raysect_object: Raysect Mesh primitive instance
     """
 
     def __init__(self, raysect_object):
-        
+
         if not isinstance(raysect_object, Mesh):
-            raise TypeError("The raysect_object has to be instance of Raysect Box primitive, wrong type '{}' given.".format(type(raysect_object)))
-        
+            raise TypeError("The raysect_object has to be instance of Raysect "
+                            "Box primitive, wrong type '{}' given.".format(type(raysect_object)))
+
         super().__init__(raysect_object)
-        
+
     def _mayavi_source_from_raysect_object(self):
         self._raysect_mesh = self._raysect_object
 
 
 class CSGMeshSource(TriangularMeshSource):
     """
-    Triangular mesh representation of the Raysect CSG primitive.
-    :param raysect_object: Raysect Box primitive
+    Class for graphical representation of the Raysect CSGPrimitive primitive.
+    :param raysect_object: Raysect CSGPrimitive primitive instance
     """
 
     def __init__(self, raysect_object):
-        
+
         if not isinstance(raysect_object, CSGPrimitive):
             raise TypeError("The raysect_object has to be instance of Raysect Box primitive, wrong type '{}' given.".format(type(raysect_object)))
-        
+
         super().__init__(raysect_object)
-        
+
     def _mayavi_source_from_raysect_object(self):
-        
+
         primitive_a = self._raysect_object.primitive_a
         primitive_b = self._raysect_object.primitive_b
 
@@ -63,7 +64,7 @@ class CSGMeshSource(TriangularMeshSource):
             self._csg_operator = SubtractOperator()
         else:
             raise ValueError("Unidentified CSG primitive '{}'.".format(csg_primitive.__class__))
-        
+
         self._raysect_mesh = perform_mesh_csg(mesh_a_transformed, mesh_b_transformed, operator=self._csg_operator)
 
 
@@ -98,7 +99,13 @@ _object_handlers = {
 
 
 def to_mesh(primitive):
+    """
+    Automatically assings graphical representation to the primitive. Primitive has to be any of Raysect
+    primitives or observers.
 
+    :param primitive: Raysect primitive or observer object.
+    :return MayaviSource
+    """
     try:
         handler = _object_handlers[primitive.__class__]
     except KeyError:

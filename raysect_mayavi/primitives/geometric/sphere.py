@@ -9,19 +9,20 @@ from raysect.primitive import Sphere, Mesh
 
 class SphereSource(TriangularMeshSource):
     """
-    Triangular mesh representation of the Raysect Sphere primitive.
+    Class for graphical representation of the Raysect Sphere primitive.
+    :param raysect_object: Raysect Sphere primitive instance
     :param subdivision_count: Number of subdivisions to perform on the basic icosohedren with 12 vertices and 20 faces
     """
 
     def __init__(self, raysect_object, subdivision_count=2):
-        
+
         if not isinstance(raysect_object, Sphere):
             raise TypeError("The raysect_object has to be instance of Raysect Sphere primitive, wrong type '{}' given.".format(type(raysect_object)))
 
         self.subdivision_count = subdivision_count
 
         super().__init__(raysect_object)
-    
+
     def _mayavi_source_from_raysect_object(self):
 
         # Calculate vertices and faces using the icosohedren method
@@ -122,14 +123,14 @@ class SphereSource(TriangularMeshSource):
         triangles = np.array(triangles)
 
         self._raysect_mesh = Mesh(vertices, triangles)
-                            
+
     @property
     def subdivision_count(self):
         return self._subdivision_count
-    
+
     @subdivision_count.setter
     def subdivision_count(self, value):
-        
+
         value = int(value)
 
         if not value > 0:

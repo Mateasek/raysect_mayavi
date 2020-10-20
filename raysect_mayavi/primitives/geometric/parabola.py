@@ -1,13 +1,20 @@
 import numpy as np
 from math import sqrt
 
+from raysect.primitive import Mesh, Parabola
+
 from raysect_mayavi.primitives.source import TriangularMeshSource
 from raysect_mayavi.primitives.geometric.utility import triangulate_parabolic_cap, triangulate_cylinder_lid
 from raysect_mayavi.primitives.weld_vertices import weld_vertices
 
-from raysect.primitive import Mesh, Parabola
 
 class ParabolaSource(TriangularMeshSource):
+    """
+    Class for graphical representation of the Raysect Parabola primitive.
+    :param raysect_object: Raysect Parabola primitive instance
+    :param cylindrical_divisions: Number of angular divisions of the surfaces (default is 36)
+    :param radial_divisions: Nuber of radial divisions of the surfaces (default is 5)
+    """
 
     def __init__(self, raysect_object, cylindrical_divisions=36, radial_divisions=5):
 
