@@ -1,33 +1,32 @@
 import numpy as np
-from math import sqrt
 
-from raysect.primitive import Mesh, Parabola
+from raysect.primitive import Cone, Mesh
 
 from raysect_mayavi.primitives.source import TriangularMeshSource
-from raysect_mayavi.primitives.geometric.utility import triangulate_parabolic_cap, triangulate_cylinder_lid
 from raysect_mayavi.primitives.weld_vertices import weld_vertices
+from raysect_mayavi.primitives.geometric.utility import triangulate_cylinder_lid, triangulate_conical_cap
 
 
-class ParabolaSource(TriangularMeshSource):
+class ConeSource(TriangularMeshSource):
     """
-    Class for graphical representation of the Raysect Parabola primitive.
-    :param raysect_object: Raysect Parabola primitive instance
-    :param cylindrical_divisions: Number of angular divisions of the surfaces (default is 36)
-    :param radial_divisions: Nuber of radial divisions of the surfaces (default is 5)
+    Class for graphical representation of the Raysect Cone primitive.
+    :param raysect_object: Raysect Cone primitive instance
+    :param subdivision_count: Number of subdivisions to perform on the basic icosohedren with 12 vertices and 20 faces
     """
 
-    def __init__(self, raysect_object, cylindrical_divisions=36, radial_divisions=5):
+    def __init__(self, raysect_object, vertical_divisions=10, cylindrical_divisions=36, radial_divisions=5):
 
-        if not isinstance(raysect_object, Parabola):
-            raise TypeError("The raysect_object has to be instance of Raysect Parabola primitive, wrong type '{}' given.".format(type(raysect_object)))
+        if not isinstance(raysect_object, Cone):
+            raise TypeError("The raysect_object has to be instance of Raysect Cone primitive, wrong type '{}' given.".format(type(raysect_object)))
 
         self._cap_vertices = None
         self._cap_triangles = None
-        self._parabola_vertices = None
-        self._parabola_triangles = None
+        self._cone_vertices = None
+        self._cone_triangles = None
 
         self.cylindrical_divisions = cylindrical_divisions
         self.radial_divisions = radial_divisions
+        self.vertical_divisions = vertical_divisions
 
         super().__init__(raysect_object)
 
@@ -35,15 +34,15 @@ class ParabolaSource(TriangularMeshSource):
 
         if self._cap_vertices is None or self._cap_triangles is None:
             self._generate_cap_surface()
-        if self._parabola_vertices is None or self._parabola_triangles is None:
-            self._generate_parabola_surface()
+        if self._cone_vertices is None or self._cone_triangles is None:
+            self._generate_conic_surface()
 
         #combine vertices of the 2 surfaces
-        vertices = np.concatenate((self._cap_vertices, self._parabola_vertices))
+        vertices = np.concatenate((self._cap_vertices, self._cone_vertices))
         # recalculate and combine triangle ids for merged vertices
         n_cap = self._cap_vertices.shape[0]
 
-        parabola_triangles = self._parabola_triangles.copy()
+        parabola_triangles = self._cone_triangles.copy()
         parabola_triangles += n_cap
 
         triangles = np.concatenate((self._cap_triangles, parabola_triangles))
@@ -61,14 +60,13 @@ class ParabolaSource(TriangularMeshSource):
                                                                            self.radial_divisions,
                                                                            cylindrical_divisions=self.cylindrical_divisions)
 
-    def _generate_parabola_surface(self):
+    def _generate_conic_surface(self):
 
         if self._cap_vertices is None:
             self._generate_cap_surface()
 
         edge = self._cap_vertices[0:self.cylindrical_divisions, 0:2]
-        self._parabola_vertices, self._parabola_triangles = triangulate_parabolic_cap(self._raysect_object.height,
+        self._cone_vertices, self._cone_triangles = triangulate_conical_cap(self._raysect_object.height,
                                                                                       self.raysect_object.radius,
-                                                                                      self.radial_divisions,
+                                                                                      self.vertical_divisions,
                                                                                       edge_vertices=edge)
-

@@ -172,3 +172,35 @@ def triangulate_parabolic_cap(parabola_height, base_radius, radial_divisions, ed
         vertices[i, -1] = z
 
     return vertices, triangles
+
+def triangulate_conical_cap(cone_height, base_radius, radial_divisions, edge_vertices=None, cylindrical_divisions=90):
+    """
+    The conical cap is defined by a radius and height. It lies along the z-axis and extends over the z range [0, height].
+     The base of the cylinder is opened. The base of the cylinder lies on the x-y plane, the cone vertex (tip) lies 
+     at z=height.    
+    :param cone_height: Height of the cone, intersection of the conical cap with the z axis.
+    :param base_radius: The radius of the cap base
+    :param radial_divisions: Number of radial segments to place vertices at
+    :param edge_vertices: Gives the edge vertex positions (x, y). This is useful if the cap edge points should be identical to
+                          other meshes which simplifies welding of meshes.
+    :return: tupple (vertices, triangles) where vertices is a 2D numpy array with 3D (Mx3) vertex coorditanes. The
+             triangles is a 2D numpy array with triangle vertex ids.
+    """""
+
+    circle_vertices, triangles = triangulate_circle(base_radius, radial_divisions, edge_vertices=edge_vertices,
+                                                    cylindrical_divisions=cylindrical_divisions)
+    
+    z_height = lambda x: cone_height * (1 - x / base_radius)
+    
+    # lift circle vertices to form the 3D surface
+    vertices = np.zeros((circle_vertices.shape[0], 3))
+    vertices[:, 0:-1] = circle_vertices
+    
+    for i, v in enumerate(vertices):
+        r = sqrt(v[0] ** 2 + v[1] ** 2)
+        z = z_height(r)
+        vertices[i, -1] = z
+    
+    return vertices, triangles
+        
+        
