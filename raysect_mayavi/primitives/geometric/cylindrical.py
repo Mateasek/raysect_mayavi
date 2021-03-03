@@ -31,7 +31,7 @@ class CylindricalSource(TriangularMeshSource):
 
         super().__init__(raysect_object)
 
-    def _mayavi_source_from_raysect_object(self):
+    def _graphic_source_from_raysect_object(self):
 
         # generate mesh parts if needed
         if self._back_triangles is None or self._back_vertices is None:

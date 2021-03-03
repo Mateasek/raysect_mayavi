@@ -30,7 +30,7 @@ class ConeSource(TriangularMeshSource):
 
         super().__init__(raysect_object)
 
-    def _mayavi_source_from_raysect_object(self):
+    def _graphic_source_from_raysect_object(self):
 
         if self._cap_vertices is None or self._cap_triangles is None:
             self._generate_cap_surface()

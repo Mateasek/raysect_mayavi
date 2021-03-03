@@ -29,7 +29,7 @@ class MeshSource(TriangularMeshSource):
 
         super().__init__(raysect_object)
 
-    def _mayavi_source_from_raysect_object(self):
+    def _graphic_source_from_raysect_object(self):
         self._raysect_mesh = self._raysect_object
 
 
@@ -46,7 +46,7 @@ class CSGMeshSource(TriangularMeshSource):
 
         super().__init__(raysect_object)
 
-    def _mayavi_source_from_raysect_object(self):
+    def _graphic_source_from_raysect_object(self):
 
         primitive_a = self._raysect_object.primitive_a
         primitive_b = self._raysect_object.primitive_b

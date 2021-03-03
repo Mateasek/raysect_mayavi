@@ -5,66 +5,47 @@ from mayavi import mlab
 from mayavi.core.module import Module as MayaviModule
 from mayavi.core.scene import Scene
 
-class MayaviSource:
+class SourceBase:
     """
-    This is the base class for the raysect_mayavi representation of raysect objects.
+    This is the base class for representation of raysect objects in visualisation toolkits.
     """
     def __init__(self, raysect_object):
 
-        self._init_figure_kwargs()
         self._raysect_object = raysect_object
-        self._mayavi_source_from_raysect_object()
+        self._graphic_source_from_raysect_object()
 
-    def _init_figure_kwargs(self):
-        self.figure_kwargs= {}
-        self.figure_kwargs["size"] = (1024, 768)
-        self.figure_kwargs["bgcolor"] = (1, 1, 1)
-        self.figure_kwargs["fgcolor"] = (0.5, 0.5, 0.5)
-
-    def _mayavi_source_from_raysect_object(self):
+    def _graphic_source_from_raysect_object(self):
         """
-        Constructs raysect Mesh from sources.
+        Constructs source of information for visualisation from raysect primitives.
         :return:
         """
-        raise NotImplementedError("Virtual method _mayavi_source_from_raysect_object() has not been implemented.")
+        raise NotImplementedError("Virtual method _graphic_source_from_raysect_object() has not been implemented.")
 
-    def mayavi_plot(self, figure=None):
-        """
-        Plot the Mayavi representation of the Raysect object into the figure. The representation is done always
-        in the root node.
-        :param figure:Optional, specifies the figure to plot in.
-        return mayavi figure
-        """
-        if figure is None:
-            figure = mlab.figure(**self.figure_kwargs)
-        elif not isinstance(figure, Scene):
-            raise ValueError("figure has to be instance of mlab.figure")
+class VisualiserBase:
+    
+    def __init__(self, primitive_source):
+        
+        if not isinstance(primitive_source, SourceBase):
+            raise TypeError("primitive_sourse has to be instance of SourceBase")
 
-        self._mayavi_plot(figure)
+        self._primitive_source = primitive_source
+        
+    @property
+    def primitive_source(self):
+        return self._primitive_source
+    
+    def plot(self):
+        raise NotImplementedError("Virtual method plot() has not been implemented.")
+        
 
-        return figure
-
-    def _mayavi_plot(self, figure):
-        raise NotImplementedError("Virtual method _mayavi_plot() has not been implemented.")
-
-class TriangularMeshSource(MayaviSource):
+class TriangularMeshSource(SourceBase):
     """
     This class serves as base class for Raysect objetcs visualised with triangular meshses.
     """
     def __init__(self, raysect_object):
 
         self._raysect_mesh = None
-        self._init_plot_kwargs()
-
         super().__init__(raysect_object)
-
-        self.plot_method = mlab.triangular_mesh
-
-    def _init_plot_kwargs(self):
-        self.plot_kwargs = {}
-        self.plot_kwargs["color"] = (163 / 255.0, 163 / 255.0, 163 / 255.0)
-        self.plot_kwargs["transparent"] = True
-        self.plot_kwargs["opacity"] = 1
 
     def _vertices_root(self): 
         if self._raysect_object.parent:
@@ -115,9 +96,3 @@ class TriangularMeshSource(MayaviSource):
     @property
     def triangles(self):
         return self._raysect_mesh.data.triangles[:,0:3]
-
-    def _mayavi_plot(self, figure):
-        vertices = self._vertices_root()
-
-        mlab.triangular_mesh(vertices[:,0], vertices[:,1], vertices[:,2], self.triangles,
-                             figure=figure, **self.plot_kwargs)
