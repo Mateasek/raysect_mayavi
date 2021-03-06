@@ -8,20 +8,19 @@ class TriangularMeshVisualiser(MayaviVisualiser):
     """
     This class serves as base class for Raysect objetcs visualised with triangular meshses.
     """
+
     def __init__(self, source):
 
-        
         self._init_plot_kwargs()
 
-        
         super().__init__(source)
         self.plot_method = mlab.triangular_mesh
 
     def set_source(self, source):
 
         if not isinstance(source, TriangularMeshSource):
-            raise TypeError("source has to be instance of SourceBase.")
-        
+            raise TypeError("source has to be instance of TriangularMeshSource.")
+
         self._source = source
 
     def _init_plot_kwargs(self):
@@ -33,5 +32,5 @@ class TriangularMeshVisualiser(MayaviVisualiser):
     def _mayavi_plot(self, figure):
         vertices = self._source.vertices
 
-        mlab.triangular_mesh(vertices[:,0], vertices[:,1], vertices[:,2], self._source.triangles,
+        mlab.triangular_mesh(vertices[:, 0], vertices[:, 1], vertices[:, 2], self._source.triangles,
                              figure=figure, **self.plot_kwargs)

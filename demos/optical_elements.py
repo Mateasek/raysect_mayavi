@@ -1,11 +1,8 @@
-from raysect_mayavi import visualise_scenegraph
-
 from raysect.core import translate
 from raysect.optical import World
 from raysect.primitive import Cylinder
 from raysect.primitive.lens.spherical import BiConvex, BiConcave, PlanoConvex, PlanoConcave, Meniscus
 
-from mayavi import mlab
 # Display lens and cylinder primitives
 
 world = World()
@@ -22,5 +19,15 @@ meniscus_lens = Meniscus(diameter, center_thickness, front_curvature, back_curva
 cylinder_primitive = Cylinder(radius=0.5 * diameter, height=center_thickness, parent=world, transform=translate(0, 0, 5))
 
 
+# Visualising with mayavi
+from raysect_mayavi.mayavi import visualise_scenegraph
+from mayavi import mlab
+
 visualise_scenegraph(world)
 mlab.show()
+
+# Visualising with pyvista
+from raysect_mayavi.pyvista import visualise_scenegraph
+
+plotter = visualise_scenegraph(world)
+plotter.show()

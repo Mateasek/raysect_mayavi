@@ -110,12 +110,12 @@ light = Box(Point3D(-0.4, -0.4, -0.01), Point3D(0.4, 0.4, 0.0),
 # objects in enclosure
 box = Box(Point3D(-0.4, 0, -0.4), Point3D(0.3, 1.4, 0.3),
           parent=world,
-          transform=translate(0.4, -1 + 1e-6, 0.4)*rotate(30, 0, 0),
+          transform=translate(0.4, -1 + 1e-6, 0.4) * rotate(30, 0, 0),
           material=schott("N-BK7"))
 
 sphere = Sphere(0.4,
                 parent=world,
-                transform=translate(-0.4, -0.6 + 1e-6, -0.4)*rotate(0, 0, 0),
+                transform=translate(-0.4, -0.6 + 1e-6, -0.4) * rotate(0, 0, 0),
                 material=schott("N-BK7"))
 
 
@@ -154,6 +154,16 @@ camera.ray_extinction_min_depth = 3
 camera.ray_extinction_prob = 0.01
 
 
-from raysect_mayavi import visualise_scenegraph
+# Visualising with mayavi
+from raysect_mayavi.mayavi import visualise_scenegraph
+from mayavi import mlab
 
-visualise_scenegraph(world)
+fig = visualise_scenegraph(world)
+mlab.show()
+
+
+# Visualising with pyvista
+from raysect_mayavi.pyvista import visualise_scenegraph
+
+plotter = visualise_scenegraph(world)
+plotter.show()

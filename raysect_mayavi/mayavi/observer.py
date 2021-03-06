@@ -9,6 +9,7 @@ from mayavi import mlab
 class ObserverVisualiser(MayaviVisualiser):
     """
     Class for graphical representation of the Raysect Box primitive.
+
     :param raysect_object: Raysect Observer instance
     """
 
@@ -25,8 +26,8 @@ class ObserverVisualiser(MayaviVisualiser):
     def set_source(self, source):
 
         if not isinstance(source, ObserverSource):
-            raise TypeError("source has to be instance of SourceBase.")
-        
+            raise TypeError("source has to be instance of ObserverSource.")
+
         self._source = source
 
     def _mayavi_plot(self, figure):
@@ -42,4 +43,4 @@ class ObserverVisualiser(MayaviVisualiser):
         w = np.array([direction_raysect.z], ndmin=1)
 
         mlab.quiver3d(x, y, z, u, v, w,
-                    figure=figure, **self.plot_kwargs)
+                      figure=figure, **self.plot_kwargs)

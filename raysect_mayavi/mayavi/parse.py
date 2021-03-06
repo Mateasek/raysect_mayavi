@@ -9,17 +9,17 @@ from raysect_mayavi.mayavi.observer import ObserverVisualiser
 
 
 def parse_sources(sources):
-    
+
     visualisers = {}
-    
+
     for key, source in sources.items():
         visualisers[key] = assign_visualiser(source)
 
-    
     return visualisers
 
+
 def assign_visualiser(source):
-    
+
     if not isinstance(source, SourceBase):
         raise TypeError("sources items has to be of type SourceBase.")
     if isinstance(source, TriangularMeshSource):
@@ -30,4 +30,3 @@ def assign_visualiser(source):
         return ObserverVisualiser(source)
     else:
         raise TypeError("Source type not recognised")
-    
