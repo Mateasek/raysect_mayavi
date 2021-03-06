@@ -4,9 +4,9 @@ from mayavi import mlab
 from raysect.core import translate, Point3D, rotate_basis, Vector3D, rotate
 from raysect.optical import World
 from raysect.primitive import Box, Sphere, Cylinder, Cone
-from raysect.primitive import Sphere, Mesh, Intersect, Subtract, Union
+from raysect.primitive import Intersect, Subtract, Union
 
-from raysect_mayavi import visualise_scenegraph
+from raysect_mayavi.mayavi import visualise_scenegraph
 
 
 ########################################################################################################################
@@ -105,7 +105,7 @@ input('pause...')
 # Cone and Cylinder
 
 c1 = Cone(0.15, 1)
-c2 = Cylinder(0.15, 0.5, transform=translate(-0.25, 0, 0.5)*rotate_basis(Vector3D(1, 0, 0), Vector3D(0, 0, 1)))
+c2 = Cylinder(0.15, 0.5, transform=translate(-0.25, 0, 0.5) * rotate_basis(Vector3D(1, 0, 0), Vector3D(0, 0, 1)))
 
 world = World()
 Union(c1, c2, parent=world)
@@ -127,9 +127,9 @@ input('pause...')
 # CSG Hell
 
 world = World()
-cyl_x = Cylinder(1, 4.2, transform=rotate(90, 0, 0)*translate(0, 0, -2.1))
-cyl_y = Cylinder(1, 4.2, transform=rotate(0, 90, 0)*translate(0, 0, -2.1))
-cyl_z = Cylinder(1, 4.2, transform=rotate(0, 0, 0)*translate(0, 0, -2.1))
+cyl_x = Cylinder(1, 4.2, transform=rotate(90, 0, 0) * translate(0, 0, -2.1))
+cyl_y = Cylinder(1, 4.2, transform=rotate(0, 90, 0) * translate(0, 0, -2.1))
+cyl_z = Cylinder(1, 4.2, transform=rotate(0, 0, 0) * translate(0, 0, -2.1))
 cube = Box(Point3D(-1.5, -1.5, -1.5), Point3D(1.5, 1.5, 1.5))
 sphere = Sphere(2.0)
 
