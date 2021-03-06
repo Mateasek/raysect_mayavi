@@ -45,6 +45,8 @@ class PyvistaVisualiser(VisualiserBase):
         :return: pyvista.plotter
         """
         plotter = plotter or pv.Plotter(**self.figure_kwargs)
+        if not isinstance(plotter, pv.Plotter):
+            raise ValueError("plotter has to be instance of pyvista.Plotter.")
 
         self._add_object(plotter)
 

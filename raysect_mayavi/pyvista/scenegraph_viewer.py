@@ -16,6 +16,8 @@ def visualise_scenegraph(world, plotter=None, show_axes=False, axes_length=1):
     """
 
     plotter = plotter or pv.Plotter(window_size=(1024, 768))
+    if not isinstance(plotter, pv.Plotter):
+        raise ValueError("plotter has to be instance of pyvista.Plotter.")
 
     sources = parse_nodes(world)
     visualisers = parse_sources(sources)
