@@ -421,7 +421,7 @@ class MeniscusLensSource(CylindricalSource):
 
         super().__init__(raysect_object, vertical_divisions, cylindrical_divisions, radial_divisions)
 
-    def _generate_barrel_mesh(self):
+    def _generate_barrel_surface_mesh(self):
 
         radius = 0.5 * self.raysect_object.diameter
         height = self.raysect_object.edge_thickness
