@@ -18,7 +18,7 @@ class BoxSource(TriangularMeshSource):
 
         super().__init__(raysect_object)
 
-    def _mayavi_source_from_raysect_object(self):
+    def _graphic_source_from_raysect_object(self):
 
         lower = self._raysect_object.lower
         upper = self._raysect_object.upper

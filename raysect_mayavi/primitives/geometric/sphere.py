@@ -2,9 +2,8 @@
 import numpy as np
 
 from raysect_mayavi.primitives.source import TriangularMeshSource
-from raysect_mayavi.primitives.mesh_tools import subdivide
 
-from raysect.core import Point3D, Vector3D
+from raysect.core import Vector3D
 from raysect.primitive import Sphere, Mesh
 
 class SphereSource(TriangularMeshSource):
@@ -23,7 +22,7 @@ class SphereSource(TriangularMeshSource):
 
         super().__init__(raysect_object)
 
-    def _mayavi_source_from_raysect_object(self):
+    def _graphic_source_from_raysect_object(self):
 
         # Calculate vertices and faces using the icosohedren method
         # We compute a regular icosohedren with 12 vertices and 20 faces.
