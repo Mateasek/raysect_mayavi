@@ -475,3 +475,17 @@ class MeniscusLensSource(CylindricalSource):
 
         self._back_vertices = vertices
         self._back_triangles = triangles
+
+    def _generate_barrel_surface_mesh(self):
+
+        radius = 0.5 * self.raysect_object.diameter
+        height = self.raysect_object.edge_thickness
+
+        vertices, triangles = triangulate_open_cylinder(radius, height, self.cylindrical_divisions,
+                                                        self.vertical_divisions)
+
+        # shift cylinder vertices z coordinate
+        vertices[:, 2] -= self.raysect_object.back_thickness
+
+        self._barrel_vertices = vertices
+        self._barrel_triangles = triangles
