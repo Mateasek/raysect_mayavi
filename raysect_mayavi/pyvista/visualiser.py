@@ -2,7 +2,6 @@ from raysect.core import Point3D
 
 from raysect_mayavi.primitives.source import SourceBase, VisualiserBase, TriangularMeshSource
 import pyvista as pv
-pv.rcParams['use_ipyvtk'] = True
 
 class PyvistaVisualiser(VisualiserBase):
 

@@ -4,7 +4,6 @@ from raysect_mayavi.primitives.observer import ObserverSource
 from raysect_mayavi.pyvista.visualiser import PyvistaVisualiser
 
 import pyvista as pv 
-pv.rcParams['use_ipyvtk'] = True
 
 class ObserverVisualiser(PyvistaVisualiser):
     """
