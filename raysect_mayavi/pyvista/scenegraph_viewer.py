@@ -1,5 +1,4 @@
 import pyvista as pv
-#pv.global_theme.jupyter_backend = 'pythreejs'
 
 from raysect_mayavi.primitives.parse_nodes import parse_nodes
 from raysect_mayavi.pyvista.parse import parse_sources
