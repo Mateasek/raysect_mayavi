@@ -1,9 +1,4 @@
 from raysect.core import Point3D
-from raysect.primitive import Mesh
-
-from mayavi import mlab
-from mayavi.core.module import Module as MayaviModule
-from mayavi.core.scene import Scene
 
 class SourceBase:
     """
