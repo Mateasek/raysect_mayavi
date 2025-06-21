@@ -25,3 +25,20 @@ def parse_nodes(node, mesh_dict=None):
             mesh_dict[child] = to_mesh(child)
 
     return mesh_dict
+
+
+def parse_elements(element, mesh_dict=None):
+
+    if mesh_dict is None:
+        mesh_dict = {}
+    
+    if isinstance(element, list):
+        for obj in element:
+            if isinstance(obj, Node) or isinstance(obj, World):
+                mesh_dict = {**mesh_dict, **parse_nodes(obj, mesh_dict)}
+            else:
+                mesh_dict[obj] = to_mesh(obj)
+    else:
+        mesh_dict[obj] = to_mesh(obj)
+    
+    return mesh_dict

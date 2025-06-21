@@ -2,13 +2,13 @@
 from raysect_mayavi.primitives.source import SourceBase, TriangularMeshSource
 from raysect_mayavi.primitives.ray import LoggingRaySource
 from raysect_mayavi.primitives.observer import ObserverSource
-
+from raysect_mayavi.pyvista.visualiser import PyvistaVisualiser
 from raysect_mayavi.pyvista.mesh import TriangularMeshVisualiser
 from raysect_mayavi.pyvista.ray import LoggingRayVisualiser
 from raysect_mayavi.pyvista.observer import ObserverVisualiser
 
 
-def parse_sources(sources):
+def parse_sources(sources: dict) -> dict:
     
     visualisers = {}
     
@@ -18,7 +18,7 @@ def parse_sources(sources):
     
     return visualisers
 
-def assign_visualiser(source):
+def assign_visualiser(source: SourceBase) -> PyvistaVisualiser:
     
     if not isinstance(source, SourceBase):
         raise TypeError("sources items has to be of type SourceBase.")

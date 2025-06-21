@@ -11,7 +11,7 @@ class ObserverVisualiser(PyvistaVisualiser):
     :param raysect_object: Raysect Observer instance
     """
 
-    def __init__(self, source):
+    def __init__(self, source: ObserverSource):
         
         self.length = 0.1
         super().__init__(source)
@@ -37,14 +37,14 @@ class ObserverVisualiser(PyvistaVisualiser):
         self._length = value
         
 
-    def set_source(self, source):
+    def set_source(self, source: ObserverSource):
 
         if not isinstance(source, ObserverSource):
             raise TypeError("source has to be instance of SourceBase.")
         
         self._source = source
     
-    def get_data_object(self):
+    def get_data_object(self) -> pv.Arrow:
         origin_vector = self._source.origin_root
         origin = np.array([origin_vector.x, origin_vector.y, origin_vector.z])
         direction_vector = self.length * self._source.direction_root.normalise()
@@ -52,7 +52,7 @@ class ObserverVisualiser(PyvistaVisualiser):
         
         return pv.Arrow(start=origin, direction=direction, **self.plot_kwargs)
 
-    def _add_object(self, plotter):
+    def _add_object(self, plotter: pv.Plotter):
 
         mesh = self.get_data_object()
         plotter.add_mesh(mesh, "r")

@@ -12,27 +12,38 @@ class LoggingRayVisualiser(PyvistaVisualiser):
     :param raysect_object: Raysect Loggingray instance containing path_vertices
     """
 
-    def __init__(self, source):
+    def __init__(self, source: LoggingRaySource):
         
         self._init_plot_kwargs()
         super().__init__(source)
 
-    def set_source(self, source):
+    def set_source(self, source: LoggingRaySource):
 
         if not isinstance(source, LoggingRaySource):
             raise TypeError("source has to be instance of SourceBase.")
         
         self._source = source
 
-    def get_data_object(self):
+    def get_data_object(self) -> pv.Line:
         vertices = self._source._vertices
-        if len(vertices) > 0:
-            return pv.lines_from_points(vertices, close=False)
-        else:
+
+        if len(vertices) < 1:
             return None
+        
+        # this is a hack, for some reason pythreejs doesnt display lines...
+        #lines = np.zeros((vertices.shape[0] - 1, 3), dtype=int)
+        #for i in range(vertices.shape[0] - 1):
+        #    lines[i, 0] = i
+        #    lines[i, 1] = i + 1
+        #    lines[i, 2] = i
+
+        #mesh = pv.make_tri_mesh(vertices, lines)
+        mesh = pv.MultipleLines(points=vertices)
+
+        return mesh
 
     def _add_object(self, plotter):
 
-        mesh = self.get_data_object()
-        if mesh is not None:
-            plotter.add_mesh(mesh, color="g")
+        path = self.get_data_object()
+        if path is not None:
+            plotter.add_mesh(path, **self.plot_kwargs)

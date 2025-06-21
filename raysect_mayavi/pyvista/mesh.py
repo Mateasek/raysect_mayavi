@@ -10,7 +10,7 @@ class TriangularMeshVisualiser(PyvistaVisualiser):
     """
     This class serves as base class for Raysect objetcs visualised with triangular meshses.
     """
-    def __init__(self, source):
+    def __init__(self, source: TriangularMeshSource):
 
         
         self._init_plot_kwargs()
@@ -18,14 +18,14 @@ class TriangularMeshVisualiser(PyvistaVisualiser):
         
         super().__init__(source)
 
-    def set_source(self, source):
+    def set_source(self, source: TriangularMeshSource):
 
         if not isinstance(source, TriangularMeshSource):
             raise TypeError("source has to be instance of SourceBase.")
         
         self._source = source
     
-    def get_data_object(self):
+    def get_data_object(self) -> pv.PolyData:
 
         vertices = self._source.vertices
         triangles = self._source.triangles
@@ -33,7 +33,7 @@ class TriangularMeshVisualiser(PyvistaVisualiser):
         return pv.make_tri_mesh(vertices, triangles)
 
         
-    def _add_object(self, plotter):
+    def _add_object(self, plotter: pv.Plotter):
         
         mesh = self.get_data_object()
-        plotter.add_mesh(mesh)
+        plotter.add_mesh(mesh, color=None)

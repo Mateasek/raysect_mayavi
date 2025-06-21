@@ -70,7 +70,7 @@ class TriangularMeshSource(SourceBase):
 
     @property
     def vertices_local(self):
-        return self._raysect_mesh.data.vertices()
+        return self._raysect_mesh.data.vertices
 
     @property
     def vertices(self):

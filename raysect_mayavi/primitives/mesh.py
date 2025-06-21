@@ -5,15 +5,28 @@ from raysect.optical.loggingray import LoggingRay
 from raysect.optical.observer import SightLine, FibreOptic, Pixel, TargettedPixel, MeshPixel, MeshCamera
 from raysect.optical.observer import CCDArray, TargettedCCDArray, OrthographicCamera, PinholeCamera, VectorCamera
 
+from cherab.tools.observers.spectroscopy import SpectroscopicFibreOptic
+
 from raysect_mayavi.primitives.mesh_tools import subdivide
 from raysect_mayavi.primitives.mesh_csg import perform_mesh_csg
-from raysect_mayavi.primitives.mesh_csg import Intersect as IntersectOperator, Union as UnionOperator,Subtract as SubtractOperator
+from raysect_mayavi.primitives.mesh_csg import (
+    Intersect as IntersectOperator,
+    Union as UnionOperator,
+    Subtract as SubtractOperator,
+)
 from raysect_mayavi.primitives.geometric import BoxSource, SphereSource, CylinderSource, ConeSource, ParabolaSource
-from raysect_mayavi.primitives.geometric import BiConvexLensSource, BiConcaveLensSource, PlanoConvexLensSource, PlanoConcaveLensSource, MeniscusLensSource
+from raysect_mayavi.primitives.geometric import (
+    BiConvexLensSource,
+    BiConcaveLensSource,
+    PlanoConvexLensSource,
+    PlanoConcaveLensSource,
+    MeniscusLensSource,
+)
 from raysect_mayavi.primitives.ray import LoggingRaySource
 from raysect_mayavi.primitives.source import TriangularMeshSource
 from raysect_mayavi.primitives.observer import ObserverSource
 from raysect_mayavi.primitives.mesh_tools import subdivide
+
 
 class MeshSource(TriangularMeshSource):
     """
@@ -22,10 +35,12 @@ class MeshSource(TriangularMeshSource):
     """
 
     def __init__(self, raysect_object):
-
         if not isinstance(raysect_object, Mesh):
-            raise TypeError("The raysect_object has to be instance of Raysect "
-                            "Box primitive, wrong type '{}' given.".format(type(raysect_object)))
+            raise TypeError(
+                "The raysect_object has to be instance of Raysect " "Box primitive, wrong type '{}' given.".format(
+                    type(raysect_object)
+                )
+            )
 
         super().__init__(raysect_object)
 
@@ -40,14 +55,16 @@ class CSGMeshSource(TriangularMeshSource):
     """
 
     def __init__(self, raysect_object):
-
         if not isinstance(raysect_object, CSGPrimitive):
-            raise TypeError("The raysect_object has to be instance of Raysect Box primitive, wrong type '{}' given.".format(type(raysect_object)))
+            raise TypeError(
+                "The raysect_object has to be instance of Raysect Box primitive, wrong type '{}' given.".format(
+                    type(raysect_object)
+                )
+            )
 
         super().__init__(raysect_object)
 
     def _graphic_source_from_raysect_object(self):
-
         primitive_a = self._raysect_object.primitive_a
         primitive_b = self._raysect_object.primitive_b
 
@@ -94,8 +111,9 @@ _object_handlers = {
     TargettedCCDArray: ObserverSource,
     OrthographicCamera: ObserverSource,
     PinholeCamera: ObserverSource,
-    VectorCamera: ObserverSource
- }
+    VectorCamera: ObserverSource,
+    SpectroscopicFibreOptic: ObserverSource,
+}
 
 
 def to_mesh(primitive):

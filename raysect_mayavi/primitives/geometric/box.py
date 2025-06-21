@@ -11,12 +11,22 @@ class BoxSource(TriangularMeshSource):
     :param raysect_object: Raysect Box primitive instance
     """
 
-    def __init__(self, raysect_object):
+    def __init__(self, raysect_object, subdivide=3):
 
         if not isinstance(raysect_object, Box):
             raise TypeError("The raysect_object has to be instance of Raysect Box primitive, wrong type '{}' given.".format(type(raysect_object)))
 
+        self.subdivide = subdivide
         super().__init__(raysect_object)
+    
+    @property
+    def subdivide(self):
+        return self._subidivide
+
+    @subdivide.setter
+    def subdivide(self, value):
+        self._subidivide = int(value)
+
 
     def _graphic_source_from_raysect_object(self):
 
@@ -44,4 +54,4 @@ class BoxSource(TriangularMeshSource):
                     [2, 3, 7], [2, 7, 6]]  # right face (y-z)
 
         mesh = Mesh(vertices, triangles)
-        self._raysect_mesh = subdivide(mesh)
+        self._raysect_mesh = subdivide(mesh, self.subdivide)
