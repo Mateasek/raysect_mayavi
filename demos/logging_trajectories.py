@@ -53,8 +53,8 @@ for v in np.linspace(-0.012, 0.012, 11):
     plt.plot(p[:, 0], p[:, 1], 'r.')
 
 
-from raysect_mayavi import visualise_scenegraph
-from raysect_mayavi import to_mesh
+from raycanvas import visualise_scenegraph
+from raycanvas import to_mesh
 from mayavi import mlab
 
 

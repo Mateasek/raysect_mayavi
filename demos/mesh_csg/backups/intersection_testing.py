@@ -1,8 +1,7 @@
-
 import numpy as np
 from mayavi import mlab
 from raysect.core import Point3D
-from raysect_mayavi.primitives.triangle import Triangle, triangle3d_intersects_triangle3d
+from raycanvas.backend.builtin.primitives.triangle import Triangle, triangle3d_intersects_triangle3d
 
 
 # u1 = Point3D(0.0, 0.0, 1.0)

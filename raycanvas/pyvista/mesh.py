@@ -1,7 +1,7 @@
 import numpy as np
 
-from raysect_mayavi.primitives.mesh import TriangularMeshSource
-from raysect_mayavi.pyvista.visualiser import PyvistaVisualiser
+from raycanvas.backend.builtin.primitives.mesh import TriangularMeshSource
+from raycanvas.pyvista.visualiser import PyvistaVisualiser
 
 import pyvista as pv
 

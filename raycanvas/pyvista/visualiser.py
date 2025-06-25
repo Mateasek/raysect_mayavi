@@ -1,12 +1,12 @@
 from raysect.core import Point3D
 
-from raysect_mayavi.primitives.source import SourceBase, VisualiserBase, TriangularMeshSource
+from raycanvas.backend.base.source import SourceBase, VisualiserBase, TriangularMeshSource
 import pyvista as pv
 
 class PyvistaVisualiser(VisualiserBase):
 
     """
-    This is the base class for the raysect_mayavi representation of raysect objects.
+    This is the base class for the raycanvas representation of raysect objects.
     """
     def __init__(self, source):
 

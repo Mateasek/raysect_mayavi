@@ -8,8 +8,8 @@ import pyvista as pv
 
 from raysect.core import Node
 
-from raysect_mayavi.primitives.parse_nodes import parse_nodes, parse_elements
-from raysect_mayavi.pyvista.parse import parse_sources
+from raycanvas.backend.builtin.primitives.parse_nodes import parse_nodes, parse_elements
+from raycanvas.pyvista.parse import parse_sources
 
 
 def get_scenegraph_visualisers(node: Node) -> dict:

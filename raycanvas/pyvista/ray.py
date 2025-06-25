@@ -1,7 +1,7 @@
 import numpy as np
 
-from raysect_mayavi.primitives.ray import LoggingRaySource
-from raysect_mayavi.pyvista.visualiser import PyvistaVisualiser
+from raycanvas.backend.base.ray import LoggingRaySource
+from raycanvas.pyvista.visualiser import PyvistaVisualiser
 
 import pyvista as pv 
 

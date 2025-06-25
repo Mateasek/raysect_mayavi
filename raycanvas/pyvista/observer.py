@@ -1,7 +1,7 @@
 import numpy as np
 
-from raysect_mayavi.primitives.observer import ObserverSource
-from raysect_mayavi.pyvista.visualiser import PyvistaVisualiser
+from raycanvas.backend.base.observer import ObserverSource
+from raycanvas.pyvista.visualiser import PyvistaVisualiser
 
 import pyvista as pv 
 

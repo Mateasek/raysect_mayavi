@@ -1,8 +1,8 @@
-from raysect_mayavi.mayavi.visualiser import MayaviVisualiser
+from raycanvas.mayavi.visualiser import MayaviVisualiser
 
-from raysect_mayavi.primitives.ray import LoggingRaySource
+from raycanvas.backend.base.ray import LoggingRaySource
 
-from raysect_mayavi.mayavi.visualiser import MayaviVisualiser
+from raycanvas.mayavi.visualiser import MayaviVisualiser
 
 from mayavi import mlab
 

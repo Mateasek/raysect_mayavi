@@ -154,6 +154,6 @@ camera.ray_extinction_min_depth = 3
 camera.ray_extinction_prob = 0.01
 
 
-from raysect_mayavi import visualise_scenegraph
+from raycanvas import visualise_scenegraph
 
 visualise_scenegraph(world)

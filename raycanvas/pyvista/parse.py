@@ -1,11 +1,10 @@
-
-from raysect_mayavi.primitives.source import SourceBase, TriangularMeshSource
-from raysect_mayavi.primitives.ray import LoggingRaySource
-from raysect_mayavi.primitives.observer import ObserverSource
-from raysect_mayavi.pyvista.visualiser import PyvistaVisualiser
-from raysect_mayavi.pyvista.mesh import TriangularMeshVisualiser
-from raysect_mayavi.pyvista.ray import LoggingRayVisualiser
-from raysect_mayavi.pyvista.observer import ObserverVisualiser
+from raycanvas.backend.base.source import SourceBase, TriangularMeshSource
+from raycanvas.backend.base.ray import LoggingRaySource
+from raycanvas.backend.base.observer import ObserverSource
+from raycanvas.pyvista.visualiser import PyvistaVisualiser
+from raycanvas.pyvista.mesh import TriangularMeshVisualiser
+from raycanvas.pyvista.ray import LoggingRayVisualiser
+from raycanvas.pyvista.observer import ObserverVisualiser
 
 
 def parse_sources(sources: dict) -> dict:

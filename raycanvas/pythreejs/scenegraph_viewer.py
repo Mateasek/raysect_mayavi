@@ -1,6 +1,6 @@
-from raysect_mayavi.primitives.parse_nodes import parse_nodes
-from raysect_mayavi.pythreejs.parse import parse_sources
-from raysect_mayavi.pythreejs.render import get_default_camera, get_default_renderer, get_default_scene
+from raycanvas.backend.builtin.primitives.parse_nodes import parse_nodes
+from raycanvas.pythreejs.parse import parse_sources
+from raycanvas.pythreejs.render import get_default_camera, get_default_renderer, get_default_scene
 from pythreejs import Renderer, OrbitControls, PerspectiveCamera, Scene, AxesHelper
 
 

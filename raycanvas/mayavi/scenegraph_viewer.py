@@ -1,8 +1,7 @@
-
 from mayavi import mlab
 
-from raysect_mayavi.primitives.parse_nodes import parse_nodes
-from raysect_mayavi.mayavi.parse import parse_sources
+from raycanvas.backend.builtin.primitives.parse_nodes import parse_nodes
+from raycanvas.mayavi.parse import parse_sources
 
 
 def visualise_scenegraph(world, figure=None, show_axes=False, axes_length=1):

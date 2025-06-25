@@ -1,4 +1,4 @@
-from raysect_mayavi import visualise_scenegraph
+from raycanvas import visualise_scenegraph
 
 from raysect.core import translate
 from raysect.optical import World

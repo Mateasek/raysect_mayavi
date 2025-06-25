@@ -1,5 +1,5 @@
-from raysect_mayavi.primitives.mesh import TriangularMeshSource
-from raysect_mayavi.pythreejs.visualiser import PythreejsVisualiser
+from raycanvas.backend.builtin.primitives.mesh import TriangularMeshSource
+from raycanvas.pythreejs.visualiser import PythreejsVisualiser
 
 from pythreejs import (MeshStandardMaterial, MeshNormalMaterial, Group, BufferGeometry,
                        BufferAttribute, Mesh)

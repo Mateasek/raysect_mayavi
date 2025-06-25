@@ -1,7 +1,7 @@
 import numpy as np
 
-from raysect_mayavi.primitives.observer import ObserverSource
-from raysect_mayavi.mayavi.visualiser import MayaviVisualiser
+from raycanvas.backend.base.observer import ObserverSource
+from raycanvas.mayavi.visualiser import MayaviVisualiser
 
 from mayavi import mlab
 

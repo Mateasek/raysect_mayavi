@@ -1,5 +1,5 @@
-from raysect_mayavi.primitives.mesh import TriangularMeshSource
-from raysect_mayavi.mayavi.visualiser import MayaviVisualiser
+from raycanvas.backend.builtin.primitives.mesh import TriangularMeshSource
+from raycanvas.mayavi.visualiser import MayaviVisualiser
 
 from mayavi import mlab
 

@@ -1,7 +1,7 @@
 import numpy as np
 
-from raysect_mayavi.primitives.ray import LoggingRaySource
-from raysect_mayavi.pythreejs.visualiser import PythreejsVisualiser
+from raycanvas.backend.base.ray import LoggingRaySource
+from raycanvas.pythreejs.visualiser import PythreejsVisualiser
 
 from pythreejs import (LineSegmentsGeometry, LineSegments2, LineMaterial, BufferGeometry,
                        BufferAttribute)

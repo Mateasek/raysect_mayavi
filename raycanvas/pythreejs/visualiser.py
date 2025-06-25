@@ -1,12 +1,12 @@
 from raysect.core import Point3D
 
-from raysect_mayavi.primitives.source import SourceBase, VisualiserBase, TriangularMeshSource
-from raysect_mayavi.pythreejs.render import get_default_renderer
+from raycanvas.backend.base.source import SourceBase, VisualiserBase, TriangularMeshSource
+from raycanvas.pythreejs.render import get_default_renderer
 
 class PythreejsVisualiser(VisualiserBase):
 
     """
-    This is the base class for the raysect_mayavi representation of raysect objects.
+    This is the base class for the raycanvas representation of raysect objects.
     """
     def __init__(self, source):
 

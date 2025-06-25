@@ -1,7 +1,7 @@
 import numpy as np
 
-from raysect_mayavi.primitives.observer import ObserverSource
-from raysect_mayavi.pythreejs.visualiser import PythreejsVisualiser
+from raycanvas.backend.base.observer import ObserverSource
+from raycanvas.pythreejs.visualiser import PythreejsVisualiser
 
 from pythreejs import ArrowHelper, Vector3
 

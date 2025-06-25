@@ -1,11 +1,10 @@
-
 import numpy as np
 from mayavi import mlab
 from raysect.core import translate, Point3D
 from raysect.optical import World
 from raysect.primitive import Sphere, Mesh
-from raysect_mayavi.primitives import to_mesh
-from raysect_mayavi.primitives.triangle import triangle3d_intersects_triangle3d
+from raycanvas.backend.builtin.primitives.mesh import to_mesh
+from raycanvas.backend.builtin.primitives.triangle import triangle3d_intersects_triangle3d
 
 
 world = World()
@@ -129,15 +128,6 @@ for s1_tri_id in [5]:
 # s.data.cell_data.scalars = s1_intersects
 # surf = mlab.pipeline.surface(s)
 # surf.contour.filled_contours = True
-#
-# dx = s2_vertices[:, 0]
-# dy = s2_vertices[:, 1]
-# dz = s2_vertices[:, 2]
-# # mlab.triangular_mesh(dx, dy, dz, s2_triangles, scalars=s2_intersects)
-# s = mlab.pipeline.triangular_mesh_source(dx, dy, dz, s2_triangles)
-# s.data.cell_data.scalars = s2_intersects
-# surf = mlab.pipeline.surface(s)
-# surf.contour.filled_contours = True
 
 
 # for vertex_id, vertex in enumerate(s1_vertices):
@@ -149,7 +139,7 @@ for s1_tri_id in [5]:
 #         print(vertex_id)
 #         print(overlapping_triangles)
 
-# from raysect_mayavi import visualise_scenegraph
+# from raycanvas import visualise_scenegraph
 
 # visualise_scenegraph(world)
 

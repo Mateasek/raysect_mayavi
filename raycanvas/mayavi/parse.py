@@ -1,11 +1,10 @@
+from raycanvas.backend.base.source import SourceBase, TriangularMeshSource
+from raycanvas.backend.base.observer import ObserverSource
+from raycanvas.backend.base.ray import LoggingRaySource
 
-from raysect_mayavi.primitives.source import SourceBase, TriangularMeshSource
-from raysect_mayavi.primitives.ray import LoggingRaySource
-from raysect_mayavi.primitives.observer import ObserverSource
-
-from raysect_mayavi.mayavi.mesh import TriangularMeshVisualiser
-from raysect_mayavi.mayavi.ray import LoggingRayVisualiser
-from raysect_mayavi.mayavi.observer import ObserverVisualiser
+from raycanvas.mayavi.mesh import TriangularMeshVisualiser
+from raycanvas.mayavi.ray import LoggingRayVisualiser
+from raycanvas.mayavi.observer import ObserverVisualiser
 
 
 def parse_sources(sources):
