@@ -1,31 +1,18 @@
-"""Module for visualizing Raysect scenegraph using PyVista.
-
-This module provides functions to visualize Raysect scenegraphs and objects
-using PyVista's visualization capabilities.
-"""
+from typing import Union
 
 import pyvista as pv
 
-from raysect.core import Node
+from raysect.core import Node, Primitive, Observer
+from raysect.optical.loggingray import LoggingRay
 
-from raycanvas.backend.builtin.primitives.parse_nodes import parse_nodes, parse_elements
+from raycanvas.backend.builtin.primitives.parse_nodes import parse_elements
 from raycanvas.pyvista.parse import parse_sources
+from raycanvas.pyvista.visualiser import PyvistaVisualiser
+
+_uni_type_raysect_elements = Union[Node, list[Node], Primitive, Observer, LoggingRay]
 
 
-def get_scenegraph_visualisers(node: Node) -> dict:
-    """Extract visualisers from a Raysect scenegraph.
-
-    Args:
-        node: A Raysect Node instance.
-
-    Returns:
-        dict: A dictionary of visualisers for the nodes in the node.
-    """
-    sources = parse_nodes(node)
-    return parse_sources(sources)
-
-
-def get_visualisers(object_list: list) -> dict:
+def get_visualisers(elements: _uni_type_raysect_elements) -> dict:
     """Extract visualisers from a list of Raysect objects.
 
     Args:
@@ -34,68 +21,23 @@ def get_visualisers(object_list: list) -> dict:
     Returns:
         dict: A dictionary of visualisers for the objects.
     """
-    sources = parse_elements(object_list)
+    sources = parse_elements(elements)
     return parse_sources(sources)
 
 
 def visualise(
-    object_list: list,
-    plotter: pv.Plotter = None,
+    elements: _uni_type_raysect_elements,
+    visualisers: dict[Node, PyvistaVisualiser] | None = None,
+    plotter: pv.Plotter | None = None,
     show_axes: bool = False,
     axes_length: float = 1,
     jupyter_backend: str = "trame",
-) -> pv.Plotter:
-    """Visualize a list of Raysect objects.
+) -> tuple[pv.Plotter, dict[Node, PyvistaVisualiser]]:
+    """Visualize elements of a Raysect scenegraph.
 
     Args:
-        object_list: A list of Raysect objects to visualize.
-        plotter: Optional PyVista plotter instance. If None, a new one will be created.
-        show_axes: Whether to show coordinate axes (default: False).
-        axes_length: Length of the coordinate axes (default: 1).
-        jupyter_backend: Backend to use for Jupyter visualization (default: "trame").
-
-    Returns:
-        pv.Plotter: The PyVista plotter instance containing the visualization.
-    """
-    pv.set_jupyter_backend(jupyter_backend)
-    visualisers = get_scenegraph_visualisers(object_list)
-    return visualise_visualisers(visualisers, plotter, show_axes, axes_length)
-
-
-def visualise_scenegraph(
-    node: Node,
-    plotter: pv.Plotter = None,
-    show_axes: bool = False,
-    axes_length: float = 1,
-    jupyter_backend: str = "trame",
-) -> pv.Plotter:
-    """Visualize a Raysect scenegraph.
-
-    Args:
-        node: A Raysect Node instance.
-        plotter: Optional PyVista plotter instance. If None, a new one will be created.
-        show_axes: Whether to show coordinate axes (default: False).
-        axes_length: Length of the coordinate axes (default: 1).
-        jupyter_backend: Backend to use for Jupyter visualization (default: "trame").
-
-    Returns:
-        pv.Plotter: The PyVista plotter instance containing the visualization.
-    """
-    pv.set_jupyter_backend(jupyter_backend)
-    visualisers = get_scenegraph_visualisers(node)
-    return visualise_visualisers(visualisers, plotter, show_axes, axes_length)
-
-
-def visualise_visualisers(
-    visualisers: dict,
-    plotter: pv.Plotter = None,
-    show_axes: bool = False,
-    axes_length: float = 1,
-) -> pv.Plotter | None:
-    """Visualize a dictionary of visualisers.
-
-    Args:
-        visualisers: Dictionary of visualisers to plot.
+        elements: Raysect scenegraph elements to visualize.
+        visualisers: Dictionary of raycanvas visualisers to plot. If not None, new visualisers will be added to the existing dictionary.
         plotter: Optional PyVista plotter instance. If None, a new one will be created.
         show_axes: Whether to show coordinate axes (default: False).
         axes_length: Length of the coordinate axes (default: 1).
@@ -103,20 +45,32 @@ def visualise_visualisers(
     Returns:
         pv.Plotter: The PyVista plotter instance containing the visualization.
     """
+
+    new_visualisers = get_visualisers(elements)
+
+    if visualisers is None:
+        visualisers = new_visualisers
+    else:
+        visualisers = {**visualisers, **new_visualisers}
+
     if plotter is None:
         plotter = pv.Plotter(window_size=(1024, 768), notebook=True, off_screen=False)
+        pv.set_jupyter_backend(jupyter_backend)
 
-    if show_axes:
-        # Add coordinate axes
-        plotter.add_mesh(pv.Arrow((0, 0, 0), (axes_length, 0, 0)), color="r")  # X-axis
-        plotter.add_mesh(pv.Arrow((0, 0, 0), (0, axes_length, 0)), color="g")  # Y-axis
-        plotter.add_mesh(pv.Arrow((0, 0, 0), (0, 0, axes_length)), color="b")  # Z-axis
+        if show_axes:
+            # Add coordinate axes
+            plotter.add_mesh(
+                pv.Arrow((0, 0, 0), (axes_length, 0, 0)), color="r"
+            )  # X-axis
+            plotter.add_mesh(
+                pv.Arrow((0, 0, 0), (0, axes_length, 0)), color="g"
+            )  # Y-axis
+            plotter.add_mesh(
+                pv.Arrow((0, 0, 0), (0, 0, axes_length)), color="b"
+            )  # Z-axis
 
     # Plot each visualiser
-    for visualiser in visualisers.values():
-        visualiser.plot(plotter)
+    for new_visualiser in new_visualisers.values():
+        new_visualiser.plot(plotter)
 
-    # Display the plotter in Jupyter notebook
-    plotter.show()
-
-    return plotter
+    return plotter, visualisers

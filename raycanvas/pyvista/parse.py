@@ -1,3 +1,5 @@
+from raysect.core import Node
+
 from raycanvas.backend.base.source import SourceBase, TriangularMeshSource
 from raycanvas.backend.base.ray import LoggingRaySource
 from raycanvas.backend.base.observer import ObserverSource
@@ -7,7 +9,7 @@ from raycanvas.pyvista.ray import LoggingRayVisualiser
 from raycanvas.pyvista.observer import ObserverVisualiser
 
 
-def parse_sources(sources: dict) -> dict:
+def parse_sources(sources: dict[Node, SourceBase]) -> dict[Node, PyvistaVisualiser]:
     
     visualisers = {}
     

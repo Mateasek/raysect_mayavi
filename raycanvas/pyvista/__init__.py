@@ -1,1 +1,3 @@
-from .scenegraph_viewer import visualise_scenegraph
+from .scenegraph_viewer import visualise
+
+__all__ = ["visualise"]
