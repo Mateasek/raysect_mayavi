@@ -6,7 +6,7 @@ from raysect.optical import World
 from raysect.primitive import Box, Sphere, Cylinder, Cone
 from raysect.primitive import Sphere, Mesh, Intersect, Subtract, Union
 
-from raysect_mayavi import visualise_scenegraph
+from raycanvas import visualise_scenegraph
 
 
 ########################################################################################################################

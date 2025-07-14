@@ -7,8 +7,8 @@ from scipy.spatial import Delaunay, KDTree
 
 from raysect.core cimport Point3D, Vector3D, translate, rotate_basis, new_point3d
 
-from raysect_mayavi.primitives.triangle cimport Triangle, triangle3d_intersects_triangle3d
-from raysect_mayavi.primitives.weld_vertices import weld_vertices
+from raycanvas.backend.builtin.primitives.triangle cimport Triangle, triangle3d_intersects_triangle3d
+from raycanvas.backend.builtin.primitives.weld_vertices import weld_vertices
 
 
 cdef class CSG_Operator:

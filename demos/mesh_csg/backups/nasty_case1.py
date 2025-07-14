@@ -4,8 +4,8 @@ from mayavi import mlab
 from raysect.core import translate, Point3D, Vector3D
 from raysect.optical import World
 from raysect.primitive import Sphere, Mesh
-from raysect_mayavi.primitives import to_mesh
-from raysect_mayavi.primitives.triangle import triangle3d_intersects_triangle3d
+from raycanvas.primitives import to_mesh
+from raycanvas.primitives.triangle import triangle3d_intersects_triangle3d
 
 
 def plot_triangles(t1p1, t1p2, t1p3, t2p1, t2p2, t2p3):

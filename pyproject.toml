@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=61.0", "cython", "numpy>=1.21.0,<2.0.0", "raysect==0.8.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "raycanvas"
+version = "0.1.0"
+description = "Visualisation for Raysect and Cherab framework"
+readme = "README.md"
+license = {text = "EUPL 1.1"}
+
+requires-python = ">=3.8"
+dependencies = [
+    "jupyterlab",
+    "pyvista[all,trame]",
+    "numpy>=1.21.0,<2.0.0",
+    "raysect==0.8.1",
+    "scipy>=1.15.3",
+    "cherab>=1.5.0",
+    "pip>=25.1.1",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["raycanvas*"]
+exclude = ["dev*", "demos*", "tests*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--verbose",
+    "--tb=short",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+    "pytest-cov>=6.2.1",
+]

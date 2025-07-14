@@ -6,8 +6,8 @@ from mayavi import mlab
 from raysect.core import translate, Point3D, rotate_basis
 from raysect.optical import World
 from raysect.primitive import Sphere, Mesh
-from raysect_mayavi.primitives import to_mesh
-from raysect_mayavi.primitives.triangle import triangle3d_intersects_triangle3d
+from raycanvas.primitives import to_mesh
+from raycanvas.primitives.triangle import triangle3d_intersects_triangle3d
 
 
 class Union:
